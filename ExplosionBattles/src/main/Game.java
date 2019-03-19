@@ -13,8 +13,7 @@ import main.maps.MapManager;
 
 public class Game {
 
-	//Test z githubu
-	static Game game = new Game();
+	//static Game game = new Game();
 	private String map;
 	
 	private MapManager mapManager = new MapManager();
