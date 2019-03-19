@@ -1,0 +1,4 @@
+game:
+   max-players: 6
+   seconds-lobby: 30
+   seconds-game: 200

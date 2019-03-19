@@ -1,0 +1,35 @@
+name: ExplosionBattles
+
+author: astetyn
+
+main: main.Main
+
+commands:
+     
+    explosionbattles: 
+      permission: explosionbattles.base
+      description: Zakladny prikaz na pripojenie/odpojenie
+      usage: /eb <join;leave>
+      aliases: eb
+      
+    explosionbattlessetup: 
+       permission: explosionbattles.setup
+       description: Zakladny prikaz na spravovanie minihry
+       usage: /ebsetup <option> [map]
+       aliases: ebsetup
+      
+permissions:
+   explosionbattles.*:
+     children:
+        explosionbattles.base: true
+        explosionbattles.setup: true
+        explosionbattles.vip: true
+     
+   explosionbattles.vip:
+     default: op
+   explosionbattles.base:
+     default: true
+   explosionbattles.setup:
+     default: op
+        
+version: 0.0.2 Alpha
