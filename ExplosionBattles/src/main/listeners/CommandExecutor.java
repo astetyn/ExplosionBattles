@@ -1,6 +1,7 @@
 package main.listeners;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,8 +9,9 @@ import org.bukkit.entity.Player;
 import main.Game;
 import main.Main;
 import main.PlayerEB;
-import main.configuration.MapChecker;
+import main.configuration.Configuration;
 import main.configuration.WorldConfiguration;
+import main.maps.MapPlayerChecker;
 
 public class CommandExecutor {
 
@@ -74,12 +76,12 @@ public class CommandExecutor {
 		if(argsSize==1) {
 			String command = args[0];
 			if(command.equals("list")) {
-				MapChecker mc = new MapChecker();
+				MapPlayerChecker mc = new MapPlayerChecker();
 				mc.loadFiles();
 				mc.showList(p);
 				return true;
 			}else if(command.equals("spawnlobby")) {
-				WorldConfiguration wc = new WorldConfiguration(Main.getPlugin(),"lobby");
+				WorldConfiguration wc = new WorldConfiguration("lobby");
 				boolean configExists = wc.configExists();
 				
 				Location loc = p.getLocation();
@@ -111,7 +113,7 @@ public class CommandExecutor {
 				return false;
 			}
 			
-			WorldConfiguration wc = new WorldConfiguration(Main.getPlugin(),mapName);
+			WorldConfiguration wc = new WorldConfiguration(mapName);
 			
 			boolean configExists = wc.configExists();
 			
@@ -128,6 +130,14 @@ public class CommandExecutor {
 					wc.deleteConfig();
 					p.sendMessage("Mapa uspesne vymazana");
 				}else if(command.equals("addspawn")) {
+					World w = p.getLocation().getWorld();
+					String worldName = w.getName();
+					Configuration c = new Configuration(Main.getPlugin());
+					String worldNameConfig = c.getConfig().getString("misc.world-name");
+					if(worldName!=worldNameConfig) {
+						p.sendMessage("V tomto svete sa mapa nastavit neda! Prejdi do sveta: "+worldNameConfig);
+						return true;
+					}
 					boolean b = wc.addspawn(p.getLocation());
 					if(b) {
 						p.sendMessage("Spawn uspesne nastaveny");

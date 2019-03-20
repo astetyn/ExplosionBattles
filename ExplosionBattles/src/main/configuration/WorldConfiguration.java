@@ -6,20 +6,20 @@ import java.io.IOException;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import main.Main;
 
 public class WorldConfiguration {
 
-	private JavaPlugin plugin;
 	private FileConfiguration config;
 	private String fileName;
 	private File file;
 	private final int MAX_PLAYERS = 6;
+	private File mapFolder = new File(Main.getPlugin().getDataFolder()+"/maps");
 	
-	public WorldConfiguration(JavaPlugin plugin, String mapName) {
-		this.plugin = plugin;
+	public WorldConfiguration(String mapName) {
 		this.fileName = mapName+".yml";
-		this.file = new File(plugin.getDataFolder(), fileName);
+		this.file = new File(mapFolder, fileName);
 		this.config = YamlConfiguration.loadConfiguration(file);
 	}
 	
@@ -81,8 +81,12 @@ public class WorldConfiguration {
 		return config.getInt("spawn-locs");
 	}
 	
+	public boolean spectatorExists() {
+		return config.contains("spec");
+	}
+	
 	public boolean configExists() {
-		File f = new File(plugin.getDataFolder(), fileName);
+		File f = new File(mapFolder, fileName);
 		if(!f.exists()) {
 			return false;
 		}else {

@@ -1,4 +1,4 @@
-package main.configuration;
+package main.maps;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,15 +7,17 @@ import java.util.List;
 import org.bukkit.entity.Player;
 
 import main.Main;
+import main.configuration.WorldConfiguration;
 
-public class MapChecker {
+public class MapPlayerChecker {
 
 	List<File> files = new ArrayList<File>();
 	List<String> fileNames = new ArrayList<String>();
+	File mapFolder = new File(Main.getPlugin().getDataFolder()+"/maps");
 	
 	public void loadFiles() {
-		File folder = Main.getPlugin().getDataFolder();
-		for(File f : folder.listFiles()) {
+
+		for(File f : mapFolder.listFiles()) {
 			String name = f.getName();
 			name = name.replaceAll(".yml", "");
 			if(name.equals("config")||name.equals("lobby")) {
@@ -28,9 +30,9 @@ public class MapChecker {
 	
 	public void showList(Player p) {
 		for(String name : fileNames) {
-			WorldConfiguration wc = new WorldConfiguration(Main.getPlugin(),name);
+			WorldConfiguration wc = new WorldConfiguration(name);
 			int spawns = wc.getSpawns();
-			p.sendMessage("Nacitana mapa: "+name+" spravena na "+ spawns+"/6");
+			p.sendMessage("Nacitana mapa: "+name+" hotova na "+ spawns+"/6" + " a spectator: "+wc.spectatorExists());
 		}
 	}
 	

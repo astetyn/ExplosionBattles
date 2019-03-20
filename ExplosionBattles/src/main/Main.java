@@ -18,6 +18,7 @@ public class Main extends JavaPlugin {
 		plugin = this;
 		PluginManager pluginManager = Bukkit.getServer().getPluginManager();
 		Configuration c = new Configuration(plugin);
+		c.loadFolders();
 		c.loadConfiguration();
 	}
 	

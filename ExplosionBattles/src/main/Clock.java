@@ -6,11 +6,13 @@ public class Clock implements Runnable{
 	private int ticks;
 	private int maxTicks;
 	private int index;
+	private STATE nextState;
 
-	public Clock(Game game, int seconds) {
+	public Clock(Game game, int seconds, STATE nextState) {
 		this.game = game;
 		this.maxTicks = seconds;
 		this.ticks = 0;
+		this.setNextState(nextState);
 	}
 	
 	@Override
@@ -44,6 +46,14 @@ public class Clock implements Runnable{
 
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	public STATE getNextState() {
+		return nextState;
+	}
+
+	public void setNextState(STATE nextState) {
+		this.nextState = nextState;
 	}
 	
 }

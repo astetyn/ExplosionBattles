@@ -2,3 +2,5 @@ game:
    max-players: 6
    seconds-lobby: 30
    seconds-game: 200
+misc:
+   world-name: eb_world
