@@ -7,15 +7,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import main.configuration.LocTeleport;
-import main.maps.MapManager;
 import main.misc.InventorySaver;
 
 public class Game {
 
 	static Game game = new Game();
 	private String map;
-	
-	private MapManager mapManager = new MapManager();
 	private Clock clock;
 	
 	private STATE state = STATE.LOBBY_WAITING;
