@@ -12,6 +12,8 @@ public class Configuration {
 	
 	public Configuration(JavaPlugin plugin) {
 		this.plugin = plugin;
+		loadFolders();
+		loadConfiguration();
 	}
 	
 	public void loadFolders() {

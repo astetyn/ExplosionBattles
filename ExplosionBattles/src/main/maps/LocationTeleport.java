@@ -1,29 +1,23 @@
-package main.configuration;
+package main.maps;
 
 import org.bukkit.Location;
 
-import main.Game;
 import main.PlayerEB;
 import main.STATE;
+import main.configuration.WorldConfiguration;
 
-public class LocTeleport {
+public class LocationTeleport {
 
 	private PlayerEB playerEB;
 	private STATE state;
 	private String map;
 	
-	public LocTeleport(PlayerEB playerEB,STATE state) {
+	public LocationTeleport(PlayerEB playerEB,STATE state, String map) {
 		
 		this.playerEB = playerEB;
 		this.state = state;
-		teleport();
-		
-	}
-	
-	public LocTeleport(String map) {
-		
 		this.map = map;
-		teleportMap();
+		teleport();
 		
 	}
 	
@@ -44,19 +38,6 @@ public class LocTeleport {
 		}
 		}
 		
-	}
-	
-	private void teleportMap() {
-
-		WorldConfiguration wc = new WorldConfiguration(map);
-
-		int counter = 1;
-		
-		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
-			Location loc = (Location) wc.getConfig().get("loc"+counter);
-			playerEB.getPlayer().teleport(loc);
-			counter++;
-		}
-	}
+}
 	
 }

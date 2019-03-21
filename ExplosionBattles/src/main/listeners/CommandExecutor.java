@@ -1,5 +1,6 @@
 package main.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -12,6 +13,7 @@ import main.PlayerEB;
 import main.configuration.Configuration;
 import main.configuration.WorldConfiguration;
 import main.maps.MapPlayerChecker;
+import main.maps.WorldEB;
 
 public class CommandExecutor {
 
@@ -97,6 +99,14 @@ public class CommandExecutor {
 				wc.saveConfig();
 				p.sendMessage("Spawn lobby uspesne nastaveny.");
 				return true;
+			}else if(command.equals("world")) {
+				
+				WorldEB worldEB = new WorldEB();
+				worldEB.loadWorld();
+				Location loc = new Location(worldEB.getWorld(),0,150,0);
+				p.teleport(loc);
+				
+				return true;
 			}
 		}else if(argsSize==2) {
 			String command = args[0];
@@ -131,10 +141,12 @@ public class CommandExecutor {
 					p.sendMessage("Mapa uspesne vymazana");
 				}else if(command.equals("addspawn")) {
 					World w = p.getLocation().getWorld();
-					String worldName = w.getName();
+					String[] arr = w.getName().split("/");
+					String worldName = arr[arr.length-1];
 					Configuration c = new Configuration(Main.getPlugin());
 					String worldNameConfig = c.getConfig().getString("misc.world-name");
-					if(worldName!=worldNameConfig) {
+					if(!worldName.equals(worldNameConfig)) {
+						Bukkit.broadcastMessage(worldName+ " "+worldNameConfig);
 						p.sendMessage("V tomto svete sa mapa nastavit neda! Prejdi do sveta: "+worldNameConfig);
 						return true;
 					}
@@ -152,7 +164,7 @@ public class CommandExecutor {
 					}else {
 						p.sendMessage("Ziadny spawn sa uz nema vymazat");
 					}
-				}else if(command.equals("spawnspec")) {
+				}else if(command.equals("spec")) {
 					wc.setSpawnSpecator(p.getLocation());
 					p.sendMessage("Spawn na spectatora uspesne nastaveny.");
 					return true;

@@ -8,6 +8,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import main.configuration.Configuration;
 import main.listeners.CommandExecutor;
+import main.listeners.EntityDamageListener;
+import main.listeners.EntityExplodeListener;
+import main.listeners.EntityItemListener;
+import main.listeners.FoodLevelChangeListener;
+import main.listeners.PlayerBlockListener;
+import main.listeners.PlayerInteractListener;
+import main.listeners.PlayerInventoryListener;
+import main.listeners.PlayerLeaveListener;
 
 public class Main extends JavaPlugin {
 	
@@ -17,6 +25,15 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		plugin = this;
 		PluginManager pluginManager = Bukkit.getServer().getPluginManager();
+		pluginManager.registerEvents(new PlayerInteractListener(),this);
+		pluginManager.registerEvents(new PlayerBlockListener(),this);
+		pluginManager.registerEvents(new PlayerInventoryListener(),this);
+		pluginManager.registerEvents(new PlayerLeaveListener(),this);
+		pluginManager.registerEvents(new EntityExplodeListener(),this);
+		pluginManager.registerEvents(new EntityItemListener(),this);
+		pluginManager.registerEvents(new EntityDamageListener(),this);
+		pluginManager.registerEvents(new FoodLevelChangeListener(),this);
+		
 		Configuration c = new Configuration(plugin);
 		c.loadFolders();
 		c.loadConfiguration();

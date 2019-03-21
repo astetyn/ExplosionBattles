@@ -6,7 +6,8 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import main.configuration.LocTeleport;
+import main.maps.LocationTeleport;
+import main.maps.MapTeleport;
 import main.misc.InventorySaver;
 
 public class Game {
@@ -28,7 +29,7 @@ public class Game {
 	
 	private void playerPreJoin(PlayerEB playerEB) {
 		InventorySaver.getInstance().saveAndClearInventory(playerEB);
-		new LocTeleport(playerEB,state);
+		new LocationTeleport(playerEB,state,map);
 	}
 	
 	private void playerPostJoin(PlayerEB playerEB) {
@@ -87,7 +88,7 @@ public class Game {
 		}
 		case GAME_RUNNING:{
 			startClock(60,STATE.ENDING);
-			new LocTeleport(map);
+			new MapTeleport(map);
 			break;
 		}
 		case ENDING:{
@@ -97,6 +98,15 @@ public class Game {
 		
 		state = newState;
 		
+	}
+	
+	public boolean isPlayerInGame(Player p) {
+		for(PlayerEB playerEB : players) {
+			if(playerEB.getPlayer().equals(p)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static Game getInstance() {
