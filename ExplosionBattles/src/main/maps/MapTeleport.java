@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import main.Game;
 import main.PlayerEB;
 import main.configuration.WorldConfiguration;
+import main.maps.world.WorldEB;
 
 public class MapTeleport {
 

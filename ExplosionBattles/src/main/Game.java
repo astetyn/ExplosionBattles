@@ -3,20 +3,17 @@ package main;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import main.maps.LocationTeleport;
-import main.maps.MapTeleport;
-import main.misc.InventorySaver;
+import main.misc.inventory.InventoryManager;
+import main.misc.locations.LocationSaver;
 
 public class Game {
 
 	static Game game = new Game();
-	private String map;
-	private Clock clock;
-	
-	private STATE state = STATE.LOBBY_WAITING;
+	private String map = "mapka";
+	private StateManager stateManager = new StateManager();
 
 	private List<PlayerEB> players = new ArrayList<PlayerEB>();
 	
@@ -28,76 +25,29 @@ public class Game {
 	}
 	
 	private void playerPreJoin(PlayerEB playerEB) {
-		InventorySaver.getInstance().saveAndClearInventory(playerEB);
-		new LocationTeleport(playerEB,state,map);
+		InventoryManager.getInstance().saveAndClearInventory(playerEB);
+		InventoryManager.getInstance().giveItemsByState(playerEB);
+		LocationSaver.getInstance().saveLocation(playerEB);
+		new LocationTeleport(playerEB,stateManager.getState(),map);
 	}
 	
 	private void playerPostJoin(PlayerEB playerEB) {
 		if(players.size()==1) {
-			changeState(STATE.LOBBY_LAUNCHING);
+			stateManager.changeState(STATE.LOBBY_LAUNCHING);
 		}
 	}
 	
 	public void playerForceLeave(PlayerEB playerEB) {
 		players.remove(playerEB);
-		InventorySaver.getInstance().loadInventory(playerEB);
+		InventoryManager.getInstance().loadInventory(playerEB);
 		playerPostLeave(playerEB);
 	}
 	
 	public void playerPostLeave(PlayerEB playerEB) {
-		if(players.size()==1) {
-			changeState(STATE.LOBBY_WAITING);
+		if(players.size()<=1) {
+			stateManager.changeState(STATE.LOBBY_WAITING);
 		}
-	}
-	
-	public void startClock(int seconds,STATE nextState) {
-		clock = new Clock(this,seconds, nextState);
-		int index = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), clock, 20, 20);
-		clock.setIndex(index);
-		Bukkit.broadcastMessage("start");
-	}
-	
-	public void clockTick() {
-		Bukkit.broadcastMessage("tick"+state);
-	}
-	
-	public void clockEnd() {
-		Bukkit.broadcastMessage("end");
-		clockStop();
-		changeState(clock.getNextState());
-	}
-	
-	public void clockStop() {
-		int index = clock.getIndex();
-		Bukkit.getScheduler().cancelTask(index);
-	}
-	
-	public void changeState(STATE newState) {
-		
-		if(newState==state) {
-			return;
-		}
-		
-		switch(newState) {
-		case LOBBY_WAITING:{
-			break;
-		}
-		case LOBBY_LAUNCHING:{
-			startClock(30,STATE.GAME_RUNNING);
-			break;
-		}
-		case GAME_RUNNING:{
-			startClock(60,STATE.ENDING);
-			new MapTeleport(map);
-			break;
-		}
-		case ENDING:{
-			break;
-		}
-		}
-		
-		state = newState;
-		
+		LocationSaver.getInstance().loadAndTeleport(playerEB);
 	}
 	
 	public boolean isPlayerInGame(Player p) {
@@ -120,12 +70,12 @@ public class Game {
 	public void setPlayers(List<PlayerEB> players) {
 		this.players = players;
 	}
-
-	public STATE getState() {
-		return state;
+	
+	public String getMap() {
+		return this.map;
 	}
 	
-	public void setState(STATE state) {
-		this.state = state;
+	public StateManager getStateManager() {
+		return stateManager;
 	}
 }

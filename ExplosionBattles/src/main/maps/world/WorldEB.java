@@ -1,4 +1,4 @@
-package main.maps;
+package main.maps.world;
 
 import java.util.logging.Logger;
 
@@ -34,7 +34,7 @@ public class WorldEB {
 		
 		WorldCreator wg = new WorldCreator(PATH+WORLD_NAME);
 		wg.generateStructures(false);
-		wg.generator(new Generator());
+		wg.generator(new CustomWorldGenerator());
 		
 		this.world = wg.createWorld();
 		this.world.setAutoSave(false);
@@ -57,6 +57,7 @@ public class WorldEB {
 		
 		if(Bukkit.getServer().unloadWorld(PATH+WORLD_NAME, false)) {
 			LOG.info("ExplosionBattles >> Svet uspesne odnacitany.");
+			world = null;
 		}else {
 			LOG.info("ExplosionBattles >> Svet sa nepodarilo odnacitat.");
 		}	

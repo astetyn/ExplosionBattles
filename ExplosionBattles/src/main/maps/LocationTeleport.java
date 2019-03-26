@@ -25,6 +25,11 @@ public class LocationTeleport {
 		
 		switch(state) {
 		case LOBBY_WAITING: case LOBBY_LAUNCHING:{
+			LobbySystemChecker lsc = new LobbySystemChecker();
+			if(!lsc.lobbyExists()) {
+				playerEB.getPlayer().sendMessage("Lokacia lobby je poskodena alebo neexistuje. Kontaktuj AT.");
+				return;
+			}
 			WorldConfiguration wc = new WorldConfiguration("lobby");
 			Location loc = (Location) wc.getConfig().get("spawnlobby");
 			playerEB.getPlayer().teleport(loc);
@@ -36,8 +41,7 @@ public class LocationTeleport {
 			playerEB.getPlayer().teleport(loc);
 			break;
 		}
-		}
-		
-}
+		}	
+	}
 	
 }

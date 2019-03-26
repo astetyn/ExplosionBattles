@@ -2,25 +2,23 @@ package main;
 
 public class Clock implements Runnable{
 
-	private Game game;
+	private StateManager stateManager;
 	private int ticks;
 	private int maxTicks;
 	private int index;
-	private STATE nextState;
 
-	public Clock(Game game, int seconds, STATE nextState) {
-		this.game = game;
+	public Clock(StateManager stateManager, int seconds) {
+		this.stateManager = stateManager;
 		this.maxTicks = seconds;
 		this.ticks = 0;
-		this.setNextState(nextState);
 	}
 	
 	@Override
 	public void run() {
-		game.clockTick();
+		stateManager.stateTick();
 		ticks++;
 		if(ticks == maxTicks) {
-			game.clockEnd();
+			stateManager.stateEnd();
 		}
 	}
 	
@@ -46,14 +44,6 @@ public class Clock implements Runnable{
 
 	public void setIndex(int index) {
 		this.index = index;
-	}
-
-	public STATE getNextState() {
-		return nextState;
-	}
-
-	public void setNextState(STATE nextState) {
-		this.nextState = nextState;
 	}
 	
 }

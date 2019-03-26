@@ -13,7 +13,7 @@ import main.PlayerEB;
 import main.configuration.Configuration;
 import main.configuration.WorldConfiguration;
 import main.maps.MapPlayerChecker;
-import main.maps.WorldEB;
+import main.maps.world.WorldTeleport;
 
 public class CommandExecutor {
 
@@ -63,6 +63,10 @@ public class CommandExecutor {
 			Game.getInstance().playerJoin(p);
 			p.sendMessage("Pripojil si sa do hry.");
 		}else if(command.equals("leave")) {
+			if(!Game.getInstance().isPlayerInGame(p)) {
+				p.sendMessage("Nenachadzas sa v hre.");
+				return true;
+			}
 			Game.getInstance().playerForceLeave(playerEB);
 			p.sendMessage("Odpojil si sa z hry.");
 		}else {
@@ -101,17 +105,15 @@ public class CommandExecutor {
 				return true;
 			}else if(command.equals("world")) {
 				
-				WorldEB worldEB = new WorldEB();
-				worldEB.loadWorld();
-				Location loc = new Location(worldEB.getWorld(),0,150,0);
-				p.teleport(loc);
+				WorldTeleport wt = new WorldTeleport(p);
+				wt.teleport();
 				
 				return true;
 			}
 		}else if(argsSize==2) {
 			String command = args[0];
 			String mapName = args[1];
-			String[] options = {"create","delete","addspawn","removespawn","spawnspec"};
+			String[] options = {"create","delete","addspawn","removespawn","spec"};
 			
 			boolean bo = false;
 			for(String s : options) {

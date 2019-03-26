@@ -87,10 +87,10 @@ public class WorldConfiguration {
 	
 	public boolean configExists() {
 		File f = new File(mapFolder, fileName);
-		if(!f.exists()) {
-			return false;
-		}else {
+		if(f.exists()) {
 			return true;
+		}else {
+			return false;
 		}
 	}
 	

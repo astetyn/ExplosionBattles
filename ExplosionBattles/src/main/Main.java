@@ -16,6 +16,9 @@ import main.listeners.PlayerBlockListener;
 import main.listeners.PlayerInteractListener;
 import main.listeners.PlayerInventoryListener;
 import main.listeners.PlayerLeaveListener;
+import main.maps.world.WorldEB;
+import main.misc.inventory.InventoryManager;
+import main.misc.locations.LocationSaver;
 
 public class Main extends JavaPlugin {
 	
@@ -37,6 +40,16 @@ public class Main extends JavaPlugin {
 		Configuration c = new Configuration(plugin);
 		c.loadFolders();
 		c.loadConfiguration();
+		WorldEB worldEB = new WorldEB();
+		worldEB.loadWorld();
+	}
+	
+	@Override
+	public void onDisable() {
+		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+			LocationSaver.getInstance().loadAndTeleport(playerEB);
+			InventoryManager.getInstance().loadInventory(playerEB);
+		}
 	}
 	
 	@Override
