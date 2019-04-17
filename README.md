@@ -1,7 +1,7 @@
 # ExplosionBattles
 ExplosionBattles is a small minigame. Fast. Funny. And EXPLOSIVE!
 
-Currently in development. First Alpha release planned for mid April.
+Currently in development. First Alpha release planned for mid June.
 
 Designed for bukkit 1.12/1.13.
 All versions will be able to use them on every spigot/bukkit server.
