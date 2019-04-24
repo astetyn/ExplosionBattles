@@ -18,6 +18,7 @@ public class LocationSaver {
 	
 	public void loadAndTeleport(PlayerEB playerEB) {
 		Location loc = savedLocations.get(playerEB);
+		loc.setY(loc.getY()+1);
 		playerEB.getPlayer().teleport(loc);
 		savedLocations.remove(playerEB);
 	}

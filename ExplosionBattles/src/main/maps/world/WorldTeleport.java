@@ -9,16 +9,25 @@ import org.bukkit.entity.Player;
 public class WorldTeleport {
 
 	private Player player;
+	private boolean buildWorld;
 	
-	public WorldTeleport(Player p) {
+	public WorldTeleport(Player p, boolean buildWorld) {
 		this.player = p;
+		this.buildWorld = buildWorld;
 	}
 	
 	public void teleport() {
 		
-		WorldEB worldEB = new WorldEB();
-		worldEB.loadWorld();
-		Location loc = worldEB.getWorld().getSpawnLocation();
+		Location loc = null;
+		WorldsEB worldsEB = new WorldsEB();
+		if(buildWorld) {
+			worldsEB.loadSavedWorld();
+			loc = worldsEB.getSavedWorld().getSpawnLocation();
+		}else {
+			worldsEB.loadGameWorld();
+			loc = worldsEB.getGameWorld().getSpawnLocation();
+		}
+	
 		if(isAreaClear(loc)) {
 			fillArea(loc);
 		}

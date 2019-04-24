@@ -1,6 +1,5 @@
 package main.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,7 +8,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import main.Game;
 
-public class EntityItemListener implements Listener {
+public class PlayerItemListener implements Listener {
 
 	
 	@EventHandler
@@ -18,7 +17,6 @@ public class EntityItemListener implements Listener {
 		if(!Game.getInstance().isPlayerInGame(p)) {
 			return;
 		}
-		Bukkit.broadcastMessage("pickItem");
 		e.setCancelled(true);
 	}
 	
@@ -28,7 +26,6 @@ public class EntityItemListener implements Listener {
 		if(!Game.getInstance().isPlayerInGame(p)) {
 			return;
 		}
-		Bukkit.broadcastMessage("dropItem");
 		e.setCancelled(true);
 	}
 	

@@ -1,13 +1,19 @@
 package main.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.metadata.MetadataValue;
 
 import main.Game;
+import main.PlayerEB;
+import main.STATE;
 
 public class EntityDamageListener implements Listener {
 
@@ -20,23 +26,88 @@ public class EntityDamageListener implements Listener {
 		if(!Game.getInstance().isPlayerInGame(p)) {
 			return;
 		}
-		Bukkit.broadcastMessage("damage");
+		
+		if(Game.getInstance().getPlayer(p).isSpectator()) {
+			e.setCancelled(true);
+			return;
+		}
+		
+		if(Game.getInstance().getStateManager().getState()==STATE.ENDING) {
+			e.setCancelled(true);
+			return;
+		}
+		
+		if(e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+			return;
+		}
 		e.setCancelled(true);
 	}
 	
 	@EventHandler
 	public void onEntityByEntityDamage(EntityDamageByEntityEvent e) {
-		if(!(e.getDamager() instanceof Player)) {
+		
+		Entity entity = e.getEntity();
+		Entity damager = e.getDamager();
+		
+		if(!(entity instanceof Player)) {
 			return;
 		}
 		
-		Player damager = (Player) e.getDamager();
-		if(!Game.getInstance().isPlayerInGame(damager)) {
+		Player victim = (Player) entity;
+		
+		if(damager.getType()==EntityType.PRIMED_TNT) {
+			if(!damager.hasMetadata("tnt")) {
+				return;
+			}
+			
+			MetadataValue mv = damager.getMetadata("tnt").get(0);
+			String playerName = mv.asString();
+			Player p = Bukkit.getPlayer(playerName);
+			double damage = e.getDamage();
+			
+			
+			PlayerEB playerEB = Game.getInstance().getPlayer(victim);
+			PlayerEB playerEB2 = Game.getInstance().getPlayer(p);
+			
+			if(Game.getInstance().getStateManager().getState()==STATE.ENDING) {
+				e.setCancelled(true);
+				return;
+			}
+			
+			if(damage/1!=damage) {
+				damage/=2;
+				damage-=0.25;
+			}else {
+				damage/=2;
+			}
+			
+			e.setDamage(damage);
+			
+			p.sendMessage("Udeleny damage: "+damage);
+			
+			if(playerCheckDamage(victim, damage)) {
+				
+				Game.getInstance().playerDied(playerEB,playerEB2);
+				e.setCancelled(true);
+			}
+			
 			return;
 		}
-		
-		Bukkit.broadcastMessage("damageByEntity");
+
+		if(!Game.getInstance().isPlayerInGame(victim)) {
+			return;
+		}
 		e.setCancelled(true);
 		
+	}
+	
+	private boolean playerCheckDamage(Player p, double damage) {
+		
+		double health = p.getHealth();
+		
+		if(health<=damage) {
+			return true;
+		}
+		return false;
 	}
 }

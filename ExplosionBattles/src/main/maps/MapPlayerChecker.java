@@ -29,6 +29,11 @@ public class MapPlayerChecker {
 	}
 	
 	public void showList(Player p) {
+		
+		if(fileNames.isEmpty()) {
+			p.sendMessage("Ziadne mapy este neboli vytvorene. Vytvoris ich cez /ebsetup create <nazov>");
+		}
+		
 		for(String name : fileNames) {
 			WorldConfiguration wc = new WorldConfiguration(name);
 			int spawns = wc.getSpawns();

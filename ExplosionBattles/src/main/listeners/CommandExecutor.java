@@ -1,5 +1,11 @@
 package main.listeners;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,10 +16,10 @@ import org.bukkit.entity.Player;
 import main.Game;
 import main.Main;
 import main.PlayerEB;
-import main.configuration.Configuration;
 import main.configuration.WorldConfiguration;
 import main.maps.MapPlayerChecker;
 import main.maps.world.WorldTeleport;
+import main.maps.world.WorldsEB;
 
 public class CommandExecutor {
 
@@ -42,14 +48,45 @@ public class CommandExecutor {
 	private boolean executeCmd() {
 		int argsSize = args.length;
 		Player p = (Player) sender;
-		PlayerEB playerEB = null;
-		for(PlayerEB peb : Game.getInstance().getPlayers()) {
-			if(peb.getPlayer().equals(p)) {
-				playerEB = peb;
-			}
-		}
-		
+		PlayerEB playerEB = Game.getInstance().getPlayer(p);
+
 		if(argsSize!=1) {
+			if(argsSize>=2) {
+				String command = args[0].toLowerCase();
+				if(command.equals("report")){
+					
+					String reportMessage = "";
+					
+					for(int i = 1;i<args.length;i++) {
+						reportMessage+=args[i]+" ";
+					}
+					
+					reportMessage = StringUtils.stripAccents(reportMessage);
+					if(!Main.getPlugin().getDataFolder().exists()) {
+						Main.getPlugin().getDataFolder().mkdirs();
+					}
+					File reportFolder = new File(Main.getPlugin().getDataFolder()+"/reports");
+					if(!reportFolder.exists()) {
+						reportFolder.mkdirs();
+					}
+					
+					int numberOfFiles = reportFolder.listFiles().length;
+					
+					try {
+						File file = new File(reportFolder.getPath()+"/"+numberOfFiles+p.getName()+".txt");
+						file.createNewFile();
+						BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+						bw.write(reportMessage);
+						bw.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+					p.sendMessage("Dakujeme za prispevok a ospravedlnte nedokonalosti. Prispeli ste tym do vyvoja tejto minihry!");
+					return true;
+				}
+			}
+			
 			return false;
 		}
 		
@@ -105,15 +142,20 @@ public class CommandExecutor {
 				return true;
 			}else if(command.equals("world")) {
 				
-				WorldTeleport wt = new WorldTeleport(p);
+				WorldTeleport wt = new WorldTeleport(p,true);
 				wt.teleport();
 				
+				return true;
+			}else if(command.equals("save")) {
+				WorldsEB worldsEB = new WorldsEB();
+				worldsEB.saveWorld();
+				p.sendMessage("Mozno uspesne ulozene.");
 				return true;
 			}
 		}else if(argsSize==2) {
 			String command = args[0];
 			String mapName = args[1];
-			String[] options = {"create","delete","addspawn","removespawn","spec"};
+			String[] options = {"create","delete","addspawn","removespawn","spec","rain","night"};
 			
 			boolean bo = false;
 			for(String s : options) {
@@ -145,14 +187,13 @@ public class CommandExecutor {
 					World w = p.getLocation().getWorld();
 					String[] arr = w.getName().split("/");
 					String worldName = arr[arr.length-1];
-					Configuration c = new Configuration(Main.getPlugin());
-					String worldNameConfig = c.getConfig().getString("misc.world-name");
-					if(!worldName.equals(worldNameConfig)) {
-						Bukkit.broadcastMessage(worldName+ " "+worldNameConfig);
-						p.sendMessage("V tomto svete sa mapa nastavit neda! Prejdi do sveta: "+worldNameConfig);
+					if(!worldName.equals(WorldsEB.getWorldNameSaved())) {
+						p.sendMessage("V tomto svete sa mapa nastavit neda! Prejdi do EB sveta cez /eb world");
 						return true;
 					}
-					boolean b = wc.addspawn(p.getLocation());
+					Location loc = p.getLocation();
+					loc.setWorld(Bukkit.getWorld(WorldsEB.getFullWorldName()));
+					boolean b = wc.addspawn(loc);
 					if(b) {
 						p.sendMessage("Spawn uspesne nastaveny");
 					}else {
@@ -167,9 +208,33 @@ public class CommandExecutor {
 						p.sendMessage("Ziadny spawn sa uz nema vymazat");
 					}
 				}else if(command.equals("spec")) {
-					wc.setSpawnSpecator(p.getLocation());
+					Location loc = p.getLocation();
+					loc.setWorld(Bukkit.getWorld(WorldsEB.getFullWorldName()));
+					wc.setSpawnSpecator(loc);
 					p.sendMessage("Spawn na spectatora uspesne nastaveny.");
 					return true;
+				}else if(command.equals("rain")) {
+					boolean tg = wc.getConfig().getBoolean("rain");
+					if(tg) {
+						tg = false;
+						p.sendMessage("Dazd vypnuty.");
+					}else {
+						tg = true;
+						p.sendMessage("Dazd zapnuty.");
+					}
+					wc.getConfig().set("rain", tg);
+					wc.saveConfig();
+				}else if(command.equals("night")) {
+					boolean tg = wc.getConfig().getBoolean("night");
+					if(tg) {
+						tg = false;
+						p.sendMessage("Noc vypnuta.");
+					}else {
+						tg = true;
+						p.sendMessage("Noc zapnuta.");
+					}
+					wc.getConfig().set("night", tg);
+					wc.saveConfig();
 				}else {
 					p.sendMessage("Tato mapa uz existuje.");
 				}

@@ -1,4 +1,4 @@
-name: ExplosionBattles
+name: ExplosionBattles-SNAPSHOT
 
 author: astetyn
 
@@ -8,15 +8,15 @@ commands:
      
     explosionbattles: 
       permission: explosionbattles.base
-      description: Zakladny prikaz na pripojenie/odpojenie
-      usage: /eb <join;leave>
-      aliases: eb
+      description: Zakladny cmd na hracske veci
+      usage: /ebd <join;leave>
+      aliases: ebd
       
     explosionbattlessetup: 
        permission: explosionbattles.setup
        description: Zakladny prikaz na spravovanie minihry
-       usage: /ebsetup <option> [map]
-       aliases: ebsetup
+       usage: /ebdsetup <option> [map]
+       aliases: ebdsetup
       
 permissions:
    explosionbattles.*:

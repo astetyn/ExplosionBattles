@@ -31,6 +31,7 @@ public class InventoryManager {
 	
 	public void giveItemsByStateAll() {
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+			playerEB.getPlayer().getInventory().clear();
 			STATE state = Game.getInstance().getStateManager().getState();
 			switch(state) {
 			case LOBBY_WAITING: case LOBBY_LAUNCHING:{
