@@ -1,4 +1,4 @@
-package main.misc.inventory;
+package main.inventory;
 
 import java.util.HashMap;
 
@@ -6,45 +6,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import main.Game;
-import main.PlayerEB;
-import main.STATE;
+import main.player.PlayerEB;
 
 public class InventoryManager {
 
 	private static InventoryManager inventorySaver = new InventoryManager();
 	
 	private HashMap<PlayerEB,ItemStack[]> savedInventories = new HashMap<PlayerEB,ItemStack[]>();
-	
-	public void giveItemsByState(PlayerEB playerEB) {
-		STATE state = Game.getInstance().getStateManager().getState();
-		switch(state) {
-		case LOBBY_WAITING: case LOBBY_LAUNCHING:{
-			new LobbyInventory(playerEB);
-			break;
-		}
-		case GAME_RUNNING: case ENDING:{
-			new SpectatorInventory(playerEB);
-			break;
-		}
-		}
-	}
-	
-	public void giveItemsByStateAll() {
-		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
-			playerEB.getPlayer().getInventory().clear();
-			STATE state = Game.getInstance().getStateManager().getState();
-			switch(state) {
-			case LOBBY_WAITING: case LOBBY_LAUNCHING:{
-				new LobbyInventory(playerEB);
-				break;
-			}
-			case GAME_RUNNING: case ENDING:{
-				new SpectatorInventory(playerEB);
-				break;
-			}
-			}
-		}
-	}
 	
 	public void clearInventoryAll() {
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {

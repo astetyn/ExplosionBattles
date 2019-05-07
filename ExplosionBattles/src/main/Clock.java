@@ -1,41 +1,36 @@
 package main;
 
+import org.bukkit.Bukkit;
+
+import main.stages.StageLobbyWaiting;
+
 public class Clock implements Runnable{
 
-	private StateManager stateManager;
-	private int ticks;
-	private int maxTicks;
+	private Game game;
 	private int index;
+	private boolean stopped = false;
 
-	public Clock(StateManager stateManager, int seconds) {
-		this.stateManager = stateManager;
-		this.maxTicks = seconds;
-		this.ticks = 0;
+	public Clock(Game game) {
+		this.game = game;
+		this.index = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), this, 1, 1);
 	}
 	
 	@Override
 	public void run() {
-		stateManager.stateTick();
-		ticks++;
-		if(ticks == maxTicks) {
-			stateManager.stateEnd();
+		if(game.getStage()==null) {
+			return;
 		}
-	}
-	
-	public int getTicks() {
-		return ticks;
-	}
-
-	public int getMaxTicks() {
-		return maxTicks;
+		if(game.getStage() instanceof StageLobbyWaiting) {
+			return;
+		}
+		game.getStage().tick();
+		int stageTicks = game.getStage().getTicks();
+		game.getStage().setTicks(stageTicks+1);
 	}
 
-	public void setTicks(int ticks) {
-		this.ticks = ticks;
-	}
-
-	public void setMaxTicks(int maxTicks) {
-		this.maxTicks = maxTicks;
+	public void stop() {
+		Bukkit.getScheduler().cancelTask(index);
+		stopped = true;
 	}
 
 	public int getIndex() {
@@ -44,6 +39,10 @@ public class Clock implements Runnable{
 
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	public boolean isStopped() {
+		return stopped;
 	}
 	
 }

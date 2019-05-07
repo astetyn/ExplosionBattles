@@ -15,11 +15,12 @@ import org.bukkit.entity.Player;
 
 import main.Game;
 import main.Main;
-import main.PlayerEB;
-import main.configuration.WorldConfiguration;
+import main.configuration.Configuration;
+import main.configuration.MapConfiguration;
 import main.maps.MapPlayerChecker;
 import main.maps.world.WorldTeleport;
 import main.maps.world.WorldsEB;
+import main.player.PlayerEB;
 
 public class CommandExecutor {
 
@@ -79,7 +80,6 @@ public class CommandExecutor {
 						bw.write(reportMessage);
 						bw.close();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}	
 					p.sendMessage("Dakujeme za prispevok a ospravedlnte nedokonalosti. Prispeli ste tym do vyvoja tejto minihry!");
@@ -124,7 +124,7 @@ public class CommandExecutor {
 				mc.showList(p);
 				return true;
 			}else if(command.equals("spawnlobby")) {
-				WorldConfiguration wc = new WorldConfiguration("lobby");
+				MapConfiguration wc = new MapConfiguration("lobby");
 				boolean configExists = wc.configExists();
 				
 				Location loc = p.getLocation();
@@ -151,6 +151,10 @@ public class CommandExecutor {
 				worldsEB.saveWorld();
 				p.sendMessage("Mozno uspesne ulozene.");
 				return true;
+			}else if(command.equals("reload")) {
+				Game.getInstance().setConfiguration(new Configuration(Main.getPlugin()));
+				p.sendMessage("EB config reloaded.");
+				return true;
 			}
 		}else if(argsSize==2) {
 			String command = args[0];
@@ -167,7 +171,7 @@ public class CommandExecutor {
 				return false;
 			}
 			
-			WorldConfiguration wc = new WorldConfiguration(mapName);
+			MapConfiguration wc = new MapConfiguration(mapName);
 			
 			boolean configExists = wc.configExists();
 			

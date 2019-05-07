@@ -2,16 +2,14 @@ package main.kits;
 
 import org.bukkit.inventory.ItemStack;
 
-import main.PlayerEB;
+import main.Buyable;
+import main.player.PlayerEB;
+import main.weapons.Weapon;
 
-public class Kit implements Cloneable {
+public abstract class Kit implements Cloneable, Buyable {
 
-	private String name;
-	protected PlayerEB playerEB;
-	protected double gunCooldown;
-	
-	public Kit() {
-	}
+	private PlayerEB playerEB;
+	private Weapon defaultWeapon;
 	
 	public void startInit() {
 	}
@@ -21,12 +19,9 @@ public class Kit implements Cloneable {
 	}
 	
 	public void tick() {
-		
 	}
 	
-	public ItemStack getChooseItem() {
-		return null;
-	}
+	public abstract ItemStack getItem();
 
 	public void setPlayer(PlayerEB playerEB) {
 		this.playerEB = playerEB;
@@ -36,14 +31,6 @@ public class Kit implements Cloneable {
 		return playerEB;
 	}
 	
-	protected void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
 	public Object clone() { 
 		try {
 			return super.clone();
@@ -51,13 +38,13 @@ public class Kit implements Cloneable {
 			e.printStackTrace();
 		}
 		return null; 
-	} 
-	
-	public double getGunCooldown() {
-		return this.gunCooldown;
 	}
-	
-	public void setGunCooldown(double newCooldown) {
-		this.gunCooldown = newCooldown;
+
+	public Weapon getDefaultWeapon() {
+		return defaultWeapon;
+	}
+
+	public void setDefaultWeapon(Weapon defaultWeapon) {
+		this.defaultWeapon = defaultWeapon;
 	}
 }

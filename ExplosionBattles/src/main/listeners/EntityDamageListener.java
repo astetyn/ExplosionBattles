@@ -1,5 +1,8 @@
 package main.listeners;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -12,13 +15,14 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.metadata.MetadataValue;
 
 import main.Game;
-import main.PlayerEB;
-import main.STATE;
+import main.player.PlayerEB;
+import main.stages.StageEnding;
 
 public class EntityDamageListener implements Listener {
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent e) {
+		
 		if(!(e.getEntity() instanceof Player)) {
 			return;
 		}
@@ -27,17 +31,47 @@ public class EntityDamageListener implements Listener {
 			return;
 		}
 		
-		if(Game.getInstance().getPlayer(p).isSpectator()) {
+		if(!Game.getInstance().getPlayer(p).isInRunningGame()) {
 			e.setCancelled(true);
 			return;
 		}
 		
-		if(Game.getInstance().getStateManager().getState()==STATE.ENDING) {
+		if(Game.getInstance().getStage() instanceof StageEnding) {
 			e.setCancelled(true);
 			return;
 		}
 		
 		if(e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+			return;
+		}
+		if(e.getCause().equals(DamageCause.BLOCK_EXPLOSION)) {
+			PlayerEB damager = null;
+			if(Game.getInstance().getLastShootPlayerEB()!=null) {
+				damager = Game.getInstance().getLastShootPlayerEB();
+				Game.getInstance().setLastShootPlayerEB(null);
+			}
+
+			boolean playerWillDie = playerCheckDamage(p,e.getDamage());
+			if(playerWillDie) {
+				PlayerEB playerEB = Game.getInstance().getPlayer(p);
+				if(damager!=null) {
+					Game.getInstance().playerDied(playerEB,damager);
+				}else {
+					Game.getInstance().playerDied(playerEB);
+				}
+				e.setCancelled(true);
+			}
+			
+			if(damager!=null) {
+				damager.getPlayer().sendMessage("Zasah");
+			}
+			
+			double damage = e.getDamage();
+			
+			damage/=4;
+			
+			e.setDamage(damage);
+			
 			return;
 		}
 		e.setCancelled(true);
@@ -55,49 +89,53 @@ public class EntityDamageListener implements Listener {
 		
 		Player victim = (Player) entity;
 		
+		PlayerEB playerEB = Game.getInstance().getPlayer(victim);
+		if(playerEB==null) {
+			return;
+		}
+		
+		double damage = e.getDamage();
+		damage/=4;
+		e.setDamage(damage);
+		
+		BigDecimal bd = new BigDecimal(Double.toString(damage));
+	    bd = bd.setScale(1, RoundingMode.CEILING);
+	    damage = bd.doubleValue();
+	    
+		MetadataValue mv = null;
+		
 		if(damager.getType()==EntityType.PRIMED_TNT) {
 			if(!damager.hasMetadata("tnt")) {
+				if(damage>=victim.getHealth()) {
+					Game.getInstance().playerDied(playerEB);
+					e.setCancelled(true);
+				}
 				return;
 			}
-			
-			MetadataValue mv = damager.getMetadata("tnt").get(0);
-			String playerName = mv.asString();
-			Player p = Bukkit.getPlayer(playerName);
-			double damage = e.getDamage();
-			
-			
-			PlayerEB playerEB = Game.getInstance().getPlayer(victim);
-			PlayerEB playerEB2 = Game.getInstance().getPlayer(p);
-			
-			if(Game.getInstance().getStateManager().getState()==STATE.ENDING) {
-				e.setCancelled(true);
-				return;
-			}
-			
-			if(damage/1!=damage) {
-				damage/=2;
-				damage-=0.25;
-			}else {
-				damage/=2;
-			}
-			
-			e.setDamage(damage);
-			
-			p.sendMessage("Udeleny damage: "+damage);
-			
-			if(playerCheckDamage(victim, damage)) {
-				
-				Game.getInstance().playerDied(playerEB,playerEB2);
-				e.setCancelled(true);
-			}
-			
+			mv = damager.getMetadata("tnt").get(0);
+		}
+		
+		if(mv==null) {
+			e.setCancelled(true);
 			return;
 		}
-
-		if(!Game.getInstance().isPlayerInGame(victim)) {
+		
+		String playerName = mv.asString();
+		Player p = Bukkit.getPlayer(playerName);
+		
+		PlayerEB playerEB2 = Game.getInstance().getPlayer(p);
+		
+		if(Game.getInstance().getStage() instanceof StageEnding) {
+			e.setCancelled(true);
 			return;
 		}
-		e.setCancelled(true);
+		
+		p.sendMessage("Udeleny damage: "+damage);
+		
+		if(playerCheckDamage(victim, damage)) {
+			Game.getInstance().playerDied(playerEB,playerEB2);
+			e.setCancelled(true);
+		}
 		
 	}
 	

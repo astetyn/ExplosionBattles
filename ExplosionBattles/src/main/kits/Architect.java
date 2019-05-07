@@ -1,7 +1,5 @@
 package main.kits;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 
 import org.bukkit.Location;
@@ -10,36 +8,40 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Stairs;
-import org.bukkit.metadata.FixedMetadataValue;
 
-import main.Main;
+import main.player.PlayerEB;
+import main.weapons.MiniGun;
+import main.weapons.Weapon;
 import net.md_5.bungee.api.ChatColor;
 
 public class Architect extends Kit{
 
-	private final String name = "Architect";
-	private long lastFire = 0;
+	private Weapon weapon = new MiniGun(null);
 	private long lastBuild = 0;
 	private double cooldownBuild = 0.5;
-	private final double gunCooldown = 6;
+	private final int price = 10000;
+	private final boolean avaibleForVip = false;
+	private final String index = "kit_architect";
 	
-	public Architect() {
-		setGunCooldown(gunCooldown);
-		setName(name);
+	public Architect(PlayerEB playerEB) {
+		setPlayer(playerEB);
+		setDefaultWeapon(weapon);
 	}
 
 	@Override
 	public void startInit() {
-		ItemStack is = new ItemStack(Material.BLAZE_ROD,1);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName(ChatColor.GRAY+""+ChatColor.BOLD+"Sniper Blaze");
-		is.setItemMeta(im);
-		getPlayerEB().getPlayer().getInventory().setItem(0, is);
+		if(getPlayerEB().getWeapon()==null) {
+			weapon.setPlayerEB(getPlayerEB());
+			getPlayerEB().setWeapon(weapon);
+		}else if(!getPlayerEB().getWeapon().isSetThisRound()){
+			weapon.setPlayerEB(getPlayerEB());
+			getPlayerEB().setWeapon(weapon);
+		}
+		
 		ItemStack is2 = new ItemStack(Material.IRON_AXE,1);
 		ItemMeta im2 = is2.getItemMeta();
 		im2.setDisplayName("Stairs");
@@ -58,61 +60,64 @@ public class Architect extends Kit{
 	}
 
 	@Override
-	public void onInteract(ItemStack it) {
+	public void onInteract(ItemStack is) {
 		
-		if(it.getType()==Material.IRON_AXE||it.getType()==Material.IRON_PICKAXE||it.getType()==Material.IRON_SPADE) {
+		if(is.getType()==Material.IRON_AXE||is.getType()==Material.IRON_PICKAXE||is.getType()==Material.IRON_SPADE) {
 			long actualTime = System.currentTimeMillis();
 			double diff = actualTime - lastBuild;
 			double seconds = diff / 1000;
 			if(seconds<cooldownBuild) {
-				playerEB.getPlayer().sendMessage("Stavas moc rychlo.");
+				getPlayerEB().getPlayer().sendMessage("Stavas moc rychlo.");
 				return;
 			}
 			lastBuild = System.currentTimeMillis();
 		}
 		
-		if(it.getType()==Material.BLAZE_ROD) {
-			wantsToFire();
-		}else if(it.getType()==Material.IRON_AXE) {
+		if(is.getType()==Material.IRON_AXE) {
 			boolean b = wantsToBuildStairs();
 			if(!b) {
-				playerEB.getPlayer().sendMessage("Na schody nie je dost miesta.");
+				getPlayerEB().getPlayer().sendMessage("Na schody nie je dost miesta.");
 			}
-		}else if(it.getType()==Material.IRON_PICKAXE) {
+		}else if(is.getType()==Material.IRON_PICKAXE) {
 			boolean b = wantsToBuildWall();
 			if(!b) {
-				playerEB.getPlayer().sendMessage("Na stenu nie je dost miesta.");
+				getPlayerEB().getPlayer().sendMessage("Na stenu nie je dost miesta.");
 			}
-		}else if(it.getType()==Material.IRON_SPADE) {
+		}else if(is.getType()==Material.IRON_SPADE) {
 			boolean b = wantsToBuildPlatform();
 			if(!b) {
-				playerEB.getPlayer().sendMessage("Na platformu nie je dost miesta.");
+				getPlayerEB().getPlayer().sendMessage("Na platformu nie je dost miesta.");
 			}
-		}
+		}	
 	}
 	
-	private void wantsToFire() {
-		long actualTime = System.currentTimeMillis();
-		double diff = actualTime - lastFire;
-		double seconds = diff / 1000;
-		if(seconds<getGunCooldown()) {
-			
-		    double waitSeconds = getGunCooldown()-seconds;
-		    BigDecimal bd = new BigDecimal(Double.toString(waitSeconds));
-		    bd = bd.setScale(1, RoundingMode.CEILING);
-		    waitSeconds = bd.doubleValue();
-			playerEB.getPlayer().sendMessage("Na dalsiu strelu pockaj este "+waitSeconds+" sec.");
-			return;
-		}
-		lastFire = System.currentTimeMillis();
-		fireFireball();
+	@Override
+	public ItemStack getItem() {
+		ItemStack item = new ItemStack(Material.QUARTZ_STAIRS,1);
+		ItemMeta im = item.getItemMeta();
+		ArrayList<String> l = new ArrayList<String>();
+		l.add(ChatColor.GOLD+"Build your own structures.");
+		l.add(ChatColor.WHITE+"Obsahuje zbran "+weapon.getItem().getItemMeta().getDisplayName());
+		l.add("Moznost stavat schody, steny, plosiny");
+		im.setLore(l);
+		im.setDisplayName(ChatColor.YELLOW+"Architect");
+		item.setItemMeta(im);
+		return item;
 	}
 	
-	public void fireFireball() {
-		Player p = getPlayerEB().getPlayer();
-		Fireball fb = p.launchProjectile(Fireball.class);
-		fb.setVelocity(p.getLocation().getDirection().normalize().multiply(2));
-		fb.setMetadata("fireball", new FixedMetadataValue(Main.getPlugin(), p.getName()));
+	@Override
+	public int getPrice() {
+		return price;
+	}
+
+	@Override
+	public boolean isAvaibleForVip() {
+		return avaibleForVip;
+	}
+
+	@Override
+	public String getIndex() {
+		return index;
 	}
 	
 	public boolean wantsToBuildPlatform() {
@@ -378,15 +383,15 @@ public class Architect extends Kit{
 	
 	public boolean wantsToBuildStairs() {
 		Player p = getPlayerEB().getPlayer();
-		Location miesto = p.getLocation();
-		World svet = miesto.getWorld();
-		float yaw = (miesto.getYaw());
+		Location loc = p.getLocation();
+		World world = loc.getWorld();
+		float yaw = (loc.getYaw());
 		if(yaw<0) {
 			yaw+=360;
 		}
 		
 		if(yaw<45||yaw>315) {
-			Location l = new Location(svet,miesto.getX()+2,miesto.getY(),miesto.getZ()+2);
+			Location l = new Location(world,loc.getX()+2,loc.getY(),loc.getZ()+2);
 			
 			if(checkAreaStairs(l,false,true)) {
 				buildStairs(l,false,true);
@@ -395,7 +400,7 @@ public class Architect extends Kit{
 				return false;
 			}
 		}else if(yaw<135) {
-			Location l = new Location(svet,miesto.getX()-2,miesto.getY(),miesto.getZ()+2);
+			Location l = new Location(world,loc.getX()-2,loc.getY(),loc.getZ()+2);
 			
 			if(checkAreaStairs(l,false,false)==true) {
 				buildStairs(l,false,false);
@@ -404,7 +409,7 @@ public class Architect extends Kit{
 				return false;
 			}
 		}else if(yaw<225) {
-			Location l = new Location(svet,miesto.getX()-2,miesto.getY(),miesto.getZ()-2);
+			Location l = new Location(world,loc.getX()-2,loc.getY(),loc.getZ()-2);
 			
 			if(checkAreaStairs(l,true,false)==true) {
 				buildStairs(l,true,false);
@@ -413,7 +418,7 @@ public class Architect extends Kit{
 				return false;
 			}
 		}else if(yaw<315) {
-			Location l = new Location(svet,miesto.getX()+2,miesto.getY(),miesto.getZ()-2);
+			Location l = new Location(world,loc.getX()+2,loc.getY(),loc.getZ()-2);
 			
 			if(checkAreaStairs(l,true,true)==true) {
 				buildStairs(l,true,true);
@@ -547,17 +552,4 @@ public class Architect extends Kit{
 			}
 		}
 	}
-	
-	@Override
-	public ItemStack getChooseItem() {
-		ItemStack item = new ItemStack(Material.QUARTZ_STAIRS,1);
-		ItemMeta im = item.getItemMeta();
-		ArrayList<String> l = new ArrayList<String>();
-		l.add(ChatColor.GOLD+"Build your own structures.");
-		im.setLore(l);
-		im.setDisplayName(ChatColor.YELLOW+"Architect");
-		item.setItemMeta(im);
-		return item;
-	}
-	
 }

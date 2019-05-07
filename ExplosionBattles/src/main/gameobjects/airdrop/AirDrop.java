@@ -1,4 +1,4 @@
-package main.misc.airdrop;
+package main.gameobjects.airdrop;
 
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -11,8 +11,9 @@ import org.bukkit.metadata.MetadataValue;
 
 import main.Game;
 import main.Main;
-import main.PlayerEB;
-import main.configuration.WorldConfiguration;
+import main.configuration.MapConfiguration;
+import main.player.PlayerEB;
+import main.weapons.HeavyExplosiveSniper;
 
 public class AirDrop {
 
@@ -21,11 +22,12 @@ public class AirDrop {
 	private int tickCounter = 0;
 	private int dropTick;
 	private boolean inProcess = false;
+	private String[] bonuses = {"weaponcooldown","heavysniper"};
 	
 	public AirDrop() {
 		
 		inProcess = true;
-		WorldConfiguration wc = new WorldConfiguration(Game.getInstance().getMap());
+		MapConfiguration wc = new MapConfiguration(Game.getInstance().getMap());
 		Location locationInArena = (Location) wc.getConfig().get("loc1");
 		Location locationInArena2 = (Location) wc.getConfig().get("loc2");
 		
@@ -45,7 +47,7 @@ public class AirDrop {
 			checkArea.add(new Location(checkArea.getWorld(),0,1,0));
 			b = checkArea.getBlock();
 			cycle++;
-			if(cycle==500) {
+			if(cycle==200) {
 				break;
 			}
 		}
@@ -55,8 +57,9 @@ public class AirDrop {
 			playerEB.getPlayer().sendMessage("Zasoby prichadzaju, sledujte oblohu!");
 		}
 		
-		plane = new Plane(locationInArena.getWorld(),x,z,x1,height,z1);
+		Location startLoc = new Location(locationInArena.getWorld(),x1,height,z1);
 		
+		plane = new Plane(x,z,startLoc);
 		dropTick = (int) (Math.random()*plane.getMaxTicks());
 		
 	}
@@ -66,7 +69,7 @@ public class AirDrop {
 		tickCounter++;
 		
 		if(tickCounter==dropTick) {
-			dropBox = new DropBox(plane.getLocation());
+			dropBox = new DropBox(plane.getLocation().clone(),bonuses);
 		}
 		
 		if(dropBox!=null) {
@@ -97,18 +100,22 @@ public class AirDrop {
 		b.setType(Material.AIR);
 		b.removeMetadata("airdrop", Main.getPlugin());
 		
-		if(bonus.equals("weapon")) {
-			Firework fw = b.getWorld().spawn(b.getLocation(), Firework.class);
-			FireworkMeta fwm = fw.getFireworkMeta();
-		    FireworkEffect effect = FireworkEffect.builder().withColor(Color.GREEN).with(FireworkEffect.Type.BALL).trail(true).build();
-		    fwm.addEffect(effect);
-		    fwm.setPower(0);
-		    fw.setFireworkMeta(fwm);
-			
-			double gunCooldown = playerEB.getKit().getGunCooldown();
-			playerEB.getKit().setGunCooldown(gunCooldown/2);
-			playerEB.getPlayer().sendMessage("Airdrop zobraty! Rychlost nabijania sa ti zdvojnasobila!");
-			
+		Firework fw = b.getWorld().spawn(b.getLocation(), Firework.class);
+	    FireworkEffect effect = FireworkEffect.builder().flicker(true).trail(true).withColor(Color.GREEN).with(FireworkEffect.Type.BALL).build();
+	    FireworkMeta fwm = fw.getFireworkMeta();
+	    fwm.clearEffects();
+	    fwm.addEffect(effect);
+	    fwm.setPower(1);
+	    fw.setFireworkMeta(fwm);
+		
+		if(bonus.equals("weaponcooldown")) {
+			double gunCooldown = playerEB.getWeapon().getCooldown();
+			playerEB.getWeapon().setCooldown(gunCooldown/2);
+			playerEB.getPlayer().sendMessage("Airdrop zobraty! Nasiel si zasobnik na rychle nabijanie!");
+		}else if(bonus.equals("heavysniper")) {
+			playerEB.setWeapon(new HeavyExplosiveSniper(playerEB));
+			playerEB.getWeapon().equip();
+			playerEB.getPlayer().sendMessage("Airdrop zobraty! Nasiel si legendarnu Heavy Explosive Sniper!");
 		}
 	}
 

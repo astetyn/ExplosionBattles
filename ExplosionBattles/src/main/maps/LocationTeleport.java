@@ -2,46 +2,41 @@ package main.maps;
 
 import org.bukkit.Location;
 
-import main.PlayerEB;
-import main.STATE;
-import main.configuration.WorldConfiguration;
+import main.configuration.MapConfiguration;
+import main.player.PlayerEB;
 
 public class LocationTeleport {
 
 	private PlayerEB playerEB;
-	private STATE state;
 	private String map;
+	private GameLocation gameLoc;
 	
-	public LocationTeleport(PlayerEB playerEB,STATE state, String map) {
+	public LocationTeleport(PlayerEB playerEB, String map, GameLocation gameLoc) {
 		
 		this.playerEB = playerEB;
-		this.state = state;
 		this.map = map;
+		this.gameLoc = gameLoc;
 		teleport();
 		
 	}
 	
 	private void teleport() {
 		
-		switch(state) {
-		case LOBBY_WAITING: case LOBBY_LAUNCHING:{
+		if(gameLoc == GameLocation.LOBBY) {
 			LobbySystemChecker lsc = new LobbySystemChecker();
 			if(!lsc.lobbyExists()) {
 				playerEB.getPlayer().sendMessage("Lokacia lobby je poskodena alebo neexistuje. Kontaktuj AT.");
 				return;
 			}
-			WorldConfiguration wc = new WorldConfiguration("lobby");
+			MapConfiguration wc = new MapConfiguration("lobby");
 			Location loc = (Location) wc.getConfig().get("spawnlobby");
 			playerEB.getPlayer().teleport(loc);
-			break;
 		}
-		case GAME_RUNNING: case ENDING:{
-			WorldConfiguration wc = new WorldConfiguration(map);
+		if(gameLoc == GameLocation.SPECTATOR) {
+			MapConfiguration wc = new MapConfiguration(map);
 			Location loc = (Location) wc.getConfig().get("spec");
 			playerEB.getPlayer().teleport(loc);
-			break;
 		}
-		}	
 	}
 	
 }

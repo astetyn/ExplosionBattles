@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import org.bukkit.Location;
 
-import main.PlayerEB;
+import main.player.PlayerEB;
 
 public class LocationSaver {
 

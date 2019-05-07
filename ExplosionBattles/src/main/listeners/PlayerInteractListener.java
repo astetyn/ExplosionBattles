@@ -6,15 +6,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import main.Game;
-import main.PlayerEB;
-import main.STATE;
-import main.kits.Kit;
+import main.gameobjects.airdrop.AirDrop;
+import main.inventory.MapVotingInventory;
+import main.inventory.Shop;
 import main.kits.KitChooser;
-import main.misc.airdrop.AirDrop;
-import main.misc.inventory.MapVotingInventory;
+import main.player.PlayerEB;
+import main.stages.StageLobbyLaunching;
+import main.stages.StageLobbyWaiting;
+import main.weapons.WeaponChooser;
 
 public class PlayerInteractListener implements Listener {
 
@@ -25,7 +28,6 @@ public class PlayerInteractListener implements Listener {
 			return;
 		}
 		PlayerEB playerEB = Game.getInstance().getPlayer(p);
-		
 		
 		if(e.getAction()!=null) {
 			if(e.getAction()==Action.LEFT_CLICK_BLOCK||e.getAction()==Action.RIGHT_CLICK_BLOCK) {
@@ -40,27 +42,40 @@ public class PlayerInteractListener implements Listener {
 			return;
 		}
 		
-		ItemStack it = p.getInventory().getItemInMainHand();
-		Material material = it.getType();
-		
-		if(material.equals(Material.PAPER)) {
-			new KitChooser(playerEB);
-			e.setCancelled(true);
-		}else if(material.equals(Material.WATCH)) {
-			Game.getInstance().playerForceLeave(playerEB);
-			e.setCancelled(true);
-		}else if(material.equals(Material.WOOL)) {
-			new MapVotingInventory(playerEB);
-			e.setCancelled(true);
-		}
-		
-		if(playerEB.getState()!=STATE.GAME_RUNNING) {
+		if(e.getHand()==EquipmentSlot.OFF_HAND) {
 			return;
 		}
 		
-		Kit kit = playerEB.getKit();
-		kit.onInteract(it);
-			
+		ItemStack is = p.getInventory().getItemInMainHand();
+		Material material = is.getType();
+		
+		if(Game.getInstance().getStage() instanceof StageLobbyWaiting || Game.getInstance().getStage() instanceof StageLobbyLaunching) {
+			if(material.equals(Material.PAPER)) {
+				new KitChooser(playerEB);
+				e.setCancelled(true);
+			}else if(material.equals(Material.WATCH)) {
+				Game.getInstance().playerForceLeave(playerEB);
+				e.setCancelled(true);
+			}else if(material.equals(Material.WOOL)) {
+				new MapVotingInventory(playerEB);
+				e.setCancelled(true);
+			}else if(material.equals(Material.STICK)) {
+				new WeaponChooser(playerEB);
+				e.setCancelled(true);
+			}else if(material.equals(Material.CHEST)) {
+				new Shop(playerEB);
+				e.setCancelled(true);
+			}
+			return;
+		}
+		
+		boolean canceled = playerEB.getWeapon().onInteract(e);
+		if(!canceled) {
+			return;
+		}
+		
+		playerEB.getKit().onInteract(is);
+		
 		e.setCancelled(true);
 	}
 }

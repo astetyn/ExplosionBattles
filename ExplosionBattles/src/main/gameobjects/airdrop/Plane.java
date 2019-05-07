@@ -1,28 +1,23 @@
-package main.misc.airdrop;
+package main.gameobjects.airdrop;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 
 public class Plane {
 	
-	private double divider = 2;
+	private double pushCoef = 2;
 
 	private double pushX;
 	private double pushZ;
 	
-	private double x;
-	private int y;
-	private double z;
-	private World world;
+	private Location planeLoc;
 	
 	private int rotation;
 	private int tickCounter = 0;
 	private int maxTicks;
 	
 	private boolean planeExists = false;
-	private boolean writen = false;
 	
 	private Material oldMaterials[][] = new Material[5][5];
 	private Location oldLocations[][] = new Location[5][5];
@@ -39,33 +34,30 @@ public class Plane {
 	{air,air,hull,air,air},
 	{air,wing,hull,wing,air}};
 	
-	public Plane(World world,int xTotal,int zTotal,int xStart,int yStart,int zStart) {
+	public Plane(int xTotal,int zTotal, Location startLoc) {
+		
 		this.planeExists = true;
-		this.x = xStart;
-		this.y = yStart;
-		this.z = zStart;
-		this.world = world;
+		this.planeLoc = startLoc;
 		
 		if(Math.abs(xTotal)>Math.abs(zTotal)) {
-			maxTicks = (int) ((int) xTotal/divider);
-			pushX = divider;
-			pushZ = zTotal/(xTotal/divider);
+			maxTicks = (int) ((int) xTotal/pushCoef);
+			pushX = pushCoef;
+			pushZ = zTotal/(xTotal/pushCoef);
 			if(xTotal>0) {
 				rotation = 0;
 			}else {
 				rotation = 90;
 			}
 		}else {
-			maxTicks = (int) ((int) zTotal/divider);
-			pushX = xTotal/(zTotal/divider);
-			pushZ = divider;
+			maxTicks = (int) ((int) zTotal/pushCoef);
+			pushX = xTotal/(zTotal/pushCoef);
+			pushZ = pushCoef;
 			if(zTotal>0) {
 				rotation = 180;
 			}else {
 				rotation = 270;
 			}
 		}	
-		
 	}
 	
 	public void tick() {
@@ -76,7 +68,7 @@ public class Plane {
 			if(oldLocations[0]!=null) {
 				for(int i=0;i<planeConstruction.length;i++) {
 					for(int j=0;j<planeConstruction[0].length;j++) {
-						Block b = world.getBlockAt(oldLocations[i][j]);
+						Block b = planeLoc.getWorld().getBlockAt(oldLocations[i][j]);
 						b.setType(oldMaterials[i][j]);
 					}
 				}
@@ -85,13 +77,13 @@ public class Plane {
 			return;
 		}
 		
-		x+=pushX;
-		z+=pushZ;
+		planeLoc.add(new Location(planeLoc.getWorld(),pushX,0,0));
+		planeLoc.add(new Location(planeLoc.getWorld(),0,0,pushZ));
 		
-		if(writen) {
+		if(tickCounter>1) {
 			for(int i=0;i<planeConstruction.length;i++) {
 				for(int j=0;j<planeConstruction[0].length;j++) {
-					Block b = world.getBlockAt(oldLocations[i][j]);
+					Block b = planeLoc.getWorld().getBlockAt(oldLocations[i][j]);
 					b.setType(oldMaterials[i][j]);
 				}
 			}
@@ -100,8 +92,8 @@ public class Plane {
 		if(rotation==0) {
 			for(int i=0;i<planeConstruction.length;i++) {
 				for(int j=0;j<planeConstruction[0].length;j++) {
-					Location loc = new Location(world,x-i,y,z+j);
-					Block b = world.getBlockAt(loc);
+					Location loc = new Location(planeLoc.getWorld(),planeLoc.getX()-i,planeLoc.getY(),planeLoc.getZ()+j);
+					Block b = planeLoc.getWorld().getBlockAt(loc);
 					oldMaterials[i][j] = b.getType();
 					b.setType(planeConstruction[i][j]);
 					oldLocations[i][j] = loc;
@@ -110,8 +102,8 @@ public class Plane {
 		}else if(rotation==90) {
 			for(int i=0;i<planeConstruction.length;i++) {
 				for(int j=0;j<planeConstruction[0].length;j++) {
-					Location loc = new Location(world,x+i,y,z-j);
-					Block b = world.getBlockAt(loc);
+					Location loc = new Location(planeLoc.getWorld(),planeLoc.getX()+i,planeLoc.getY(),planeLoc.getZ()-j);
+					Block b = planeLoc.getWorld().getBlockAt(loc);
 					oldMaterials[i][j] = b.getType();
 					b.setType(planeConstruction[i][j]);
 					oldLocations[i][j] = loc;
@@ -120,8 +112,8 @@ public class Plane {
 		}else if(rotation==180) {
 			for(int i=0;i<planeConstruction.length;i++) {
 				for(int j=0;j<planeConstruction[0].length;j++) {
-					Location loc = new Location(world,x+j,y,z-i);
-					Block b = world.getBlockAt(loc);
+					Location loc = new Location(planeLoc.getWorld(),planeLoc.getX()-j,planeLoc.getY(),planeLoc.getZ()-i);
+					Block b = planeLoc.getWorld().getBlockAt(loc);
 					oldMaterials[i][j] = b.getType();
 					b.setType(planeConstruction[i][j]);
 					oldLocations[i][j] = loc;
@@ -130,19 +122,18 @@ public class Plane {
 		}else {
 			for(int i=0;i<planeConstruction.length;i++) {
 				for(int j=0;j<planeConstruction[0].length;j++) {
-					Location loc = new Location(world,x-j,y,z+i);
-					Block b = world.getBlockAt(loc);
+					Location loc = new Location(planeLoc.getWorld(),planeLoc.getX()-j,planeLoc.getY(),planeLoc.getZ()+i);
+					Block b = planeLoc.getWorld().getBlockAt(loc);
 					oldMaterials[i][j] = b.getType();
 					b.setType(planeConstruction[i][j]);
 					oldLocations[i][j] = loc;
 				}
 			}
 		}
-		writen = true;
 	}
 
 	public Location getLocation() {
-		return new Location(world,x,y,z);
+		return planeLoc;
 	}
 	
 	public boolean isPlaneExists() {

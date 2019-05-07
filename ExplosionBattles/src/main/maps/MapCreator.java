@@ -3,9 +3,9 @@ package main.maps;
 import org.bukkit.Location;
 
 import main.Game;
-import main.PlayerEB;
-import main.configuration.WorldConfiguration;
+import main.configuration.MapConfiguration;
 import main.maps.world.WorldsEB;
+import main.player.PlayerEB;
 
 public class MapCreator {
 
@@ -26,7 +26,7 @@ public class MapCreator {
 	
 	private void setConditions() {
 		
-		WorldConfiguration wc = new WorldConfiguration(map);
+		MapConfiguration wc = new MapConfiguration(map);
 		boolean rain = wc.getConfig().getBoolean("rain");
 		boolean night = wc.getConfig().getBoolean("night");
 		
@@ -45,7 +45,7 @@ public class MapCreator {
 	
 	private void teleportMap() {
 
-		WorldConfiguration wc = new WorldConfiguration(map);
+		MapConfiguration wc = new MapConfiguration(map);
 
 		int counter = 1;
 		

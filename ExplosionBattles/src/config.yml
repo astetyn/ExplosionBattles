@@ -1,6 +1,8 @@
 game:
    max-players: 6
    seconds-lobby: 30
-   seconds-game: 200
-misc:
+   seconds-game: 600
+   seconds-ending: 5
+   
+world:
    world-name: eb_world

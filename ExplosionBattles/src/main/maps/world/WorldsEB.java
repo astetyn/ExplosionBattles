@@ -19,13 +19,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
+import main.Game;
 import main.Main;
-import main.configuration.Configuration;
 
 public class WorldsEB {
 
-	private static Configuration c = new Configuration(Main.getPlugin());
-	private final static String WORLD_NAME = c.getConfig().getString("misc.world-name");
+	private final static String WORLD_NAME = Game.getInstance().getConfiguration().getConfig().getString("world.world-name");
 	private final static String WORLD_NAME_SAVED = WORLD_NAME + "-BACKUP";
 	private final static String PATH = Main.getPlugin().getDataFolder().getPath()+"/";
 	

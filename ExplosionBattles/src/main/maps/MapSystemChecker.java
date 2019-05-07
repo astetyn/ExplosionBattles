@@ -1,10 +1,9 @@
 package main.maps;
 
 import main.Game;
-import main.Main;
-import main.PlayerEB;
 import main.configuration.Configuration;
-import main.configuration.WorldConfiguration;
+import main.configuration.MapConfiguration;
+import main.player.PlayerEB;
 
 public class MapSystemChecker {
 
@@ -28,12 +27,12 @@ public class MapSystemChecker {
 	
 	public boolean check() {
 		
-		WorldConfiguration wc = new WorldConfiguration(map);
+		MapConfiguration wc = new MapConfiguration(map);
 		
 		if(!wc.configExists()) {
 			return false;
 		}
-		Configuration c = new Configuration(Main.getPlugin());
+		Configuration c = Game.getInstance().getConfiguration();
 		int maxSpawns = c.getConfig().getInt("game.max-players");
 
 		if(wc.getSpawns()!=maxSpawns) {

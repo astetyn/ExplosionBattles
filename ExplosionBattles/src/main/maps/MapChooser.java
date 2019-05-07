@@ -7,7 +7,7 @@ import java.util.List;
 
 import main.Game;
 import main.Main;
-import main.PlayerEB;
+import main.player.PlayerEB;
 import net.md_5.bungee.api.ChatColor;
 
 public class MapChooser {
@@ -53,12 +53,10 @@ public class MapChooser {
 		voteMap.put(mapName,numberOfVotes);
 		playerMap.put(playerEB, mapName);
 		
-		playerEB.getPlayer().sendMessage("Uspesne si hlasoval za mapu: "+mapName);
+		playerEB.getPlayer().sendMessage("Uspesne si hlasoval za mapu: "+ChatColor.GREEN+mapName);
 	}
 	
 	public void notifyAllPlayers() {
-		
-		List<String> mapNames = new ArrayList<String>();
 		
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
 			playerEB.getPlayer().sendMessage("Vyber si mapu.");

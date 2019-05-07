@@ -1,4 +1,4 @@
-package main.misc;
+package main.player;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -7,7 +7,6 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-import main.PlayerEB;
 import net.md_5.bungee.api.ChatColor;
 
 public class StatusBoard {
@@ -29,37 +28,9 @@ public class StatusBoard {
 		}
 	}
 	
-	public void setWaiting() {
+	public void setup(String text) {
 		resetScores();
-		data=objective.getScore("Waiting for players...");
-		data.setScore(1);
-		playerEB.getPlayer().setScoreboard(board);
-	}
-	
-	public void setLaunching() {
-		resetScores();
-		data=objective.getScore("Launching in:");
-		data.setScore(1);
-		playerEB.getPlayer().setScoreboard(board);
-	}
-	
-	public void setGameRunning() {
-		resetScores();
-		data=objective.getScore("Game will end in:");
-		data.setScore(1);
-		playerEB.getPlayer().setScoreboard(board);
-	}
-	
-	public void setSpectating() {
-		resetScores();
-		data=objective.getScore("Wait for the end:");
-		data.setScore(1);
-		playerEB.getPlayer().setScoreboard(board);
-	}
-	
-	public void setEnding() {
-		resetScores();
-		data=objective.getScore("Ending phase...");
+		data=objective.getScore(text);
 		data.setScore(1);
 		playerEB.getPlayer().setScoreboard(board);
 	}

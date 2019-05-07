@@ -8,9 +8,9 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import main.Game;
 
+@SuppressWarnings("deprecation")
 public class PlayerItemListener implements Listener {
 
-	
 	@EventHandler
 	public void onPickItem(PlayerPickupItemEvent e) {
 		Player p = (Player) e.getPlayer();
@@ -28,5 +28,4 @@ public class PlayerItemListener implements Listener {
 		}
 		e.setCancelled(true);
 	}
-	
 }

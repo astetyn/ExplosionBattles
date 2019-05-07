@@ -6,8 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import main.configuration.Configuration;
-import main.listeners.BlockExplosionListener;
+import main.inventory.InventoryManager;
+import main.listeners.BlockExplodeListener;
+import main.listeners.BlockIgniteListener;
 import main.listeners.CommandExecutor;
 import main.listeners.CreatureSpawnListener;
 import main.listeners.EntityDamageListener;
@@ -19,10 +20,11 @@ import main.listeners.PlayerInteractListener;
 import main.listeners.PlayerInventoryListener;
 import main.listeners.PlayerItemListener;
 import main.listeners.PlayerLeaveListener;
+import main.listeners.PlayerSwapHandItemsListener;
 import main.listeners.WeatherListener;
 import main.maps.world.WorldsEB;
-import main.misc.inventory.InventoryManager;
 import main.misc.locations.LocationSaver;
+import main.player.PlayerEB;
 
 public class Main extends JavaPlugin {
 	
@@ -37,17 +39,16 @@ public class Main extends JavaPlugin {
 		pluginManager.registerEvents(new PlayerInventoryListener(),this);
 		pluginManager.registerEvents(new PlayerLeaveListener(),this);
 		pluginManager.registerEvents(new PlayerCommandPreprocessListener(),this);
+		pluginManager.registerEvents(new PlayerSwapHandItemsListener(),this);
 		pluginManager.registerEvents(new EntityExplodeListener(),this);
 		pluginManager.registerEvents(new PlayerItemListener(),this);
 		pluginManager.registerEvents(new EntityDamageListener(),this);
 		pluginManager.registerEvents(new FoodLevelChangeListener(),this);
 		pluginManager.registerEvents(new WeatherListener(),this);
 		pluginManager.registerEvents(new CreatureSpawnListener(),this);
-		pluginManager.registerEvents(new BlockExplosionListener(),this);
+		pluginManager.registerEvents(new BlockExplodeListener(),this);
+		pluginManager.registerEvents(new BlockIgniteListener(),this);
 		
-		Configuration c = new Configuration(plugin);
-		c.loadFolders();
-		c.loadConfiguration();
 		WorldsEB worldsEB = new WorldsEB();
 		worldsEB.loadSavedWorld();
 		worldsEB.loadGameWorld();

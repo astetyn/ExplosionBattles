@@ -1,4 +1,4 @@
-package main.misc.inventory;
+package main.inventory;
 
 import java.util.ArrayList;
 
@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import main.PlayerEB;
+import main.player.PlayerEB;
 import net.md_5.bungee.api.ChatColor;
 
 public class SpectatorInventory {

@@ -7,7 +7,7 @@ import java.util.List;
 import org.bukkit.entity.Player;
 
 import main.Main;
-import main.configuration.WorldConfiguration;
+import main.configuration.MapConfiguration;
 
 public class MapPlayerChecker {
 
@@ -35,7 +35,7 @@ public class MapPlayerChecker {
 		}
 		
 		for(String name : fileNames) {
-			WorldConfiguration wc = new WorldConfiguration(name);
+			MapConfiguration wc = new MapConfiguration(name);
 			int spawns = wc.getSpawns();
 			p.sendMessage("Nacitana mapa: "+name+" hotova na "+ spawns+"/6" + " a spectator: "+wc.spectatorExists());
 		}

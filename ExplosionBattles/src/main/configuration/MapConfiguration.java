@@ -7,17 +7,18 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import main.Game;
 import main.Main;
 
-public class WorldConfiguration {
+public class MapConfiguration {
 
 	private FileConfiguration config;
 	private String fileName;
 	private File file;
-	private final int MAX_PLAYERS = 6;
+	private final int MAX_PLAYERS = Game.getInstance().getConfiguration().getConfig().getInt("game.max-players");
 	private File mapFolder = new File(Main.getPlugin().getDataFolder()+"/maps");
 	
-	public WorldConfiguration(String mapName) {
+	public MapConfiguration(String mapName) {
 		this.fileName = mapName+".yml";
 		this.file = new File(mapFolder, fileName);
 		this.config = YamlConfiguration.loadConfiguration(file);

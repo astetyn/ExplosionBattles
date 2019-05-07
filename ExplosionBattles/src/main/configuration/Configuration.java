@@ -27,6 +27,7 @@ public class Configuration {
 	}
 	
 	public void loadConfiguration(){
+		plugin.reloadConfig();
 		plugin.saveDefaultConfig();
 		config = plugin.getConfig();
 		config.options().copyDefaults(true);
