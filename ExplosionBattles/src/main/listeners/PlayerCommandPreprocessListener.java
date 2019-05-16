@@ -6,6 +6,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import main.Game;
+import main.MsgCenter;
+import net.md_5.bungee.api.ChatColor;
 
 public class PlayerCommandPreprocessListener implements Listener{
 
@@ -16,7 +18,7 @@ public class PlayerCommandPreprocessListener implements Listener{
 			return;
 		}
 		
-		String[] allowedCmds = {"ban","banip","kick","ebd","stop","reload", "mute","msg","r","p","whois","list"};
+		String[] allowedCmds = {"eb","ban","banip","kick","stop","reload", "mute","msg","r","p","whois","list"};
 		String cmd = e.getMessage().toLowerCase();
 		String[] parts = cmd.split(" ");
 		cmd = parts[0];
@@ -33,7 +35,7 @@ public class PlayerCommandPreprocessListener implements Listener{
 		if(pass) {
 			return;
 		}else {
-			p.sendMessage("Toto nemozes pouzit pocas hry!");
+			p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Toto nemôžeš použiť počas hry!");
 			e.setCancelled(true);
 		}
 	}

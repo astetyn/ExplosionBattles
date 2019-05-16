@@ -10,8 +10,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
+import main.MsgCenter;
 import main.player.PlayerEB;
+import net.md_5.bungee.api.ChatColor;
 
 public class Smoke {
 
@@ -36,6 +40,8 @@ public class Smoke {
 	}
 	
 	public void wantsToUseSmoke(Location loc) {
+		playerEB.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,100,1));
+		playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Aktivovala sa ti "+ChatColor.WHITE+"neviditeľnosť"+ChatColor.GRAY+" na 5 sekúnd.");
 		Entity smoke = loc.getWorld().dropItem(loc, new ItemStack(item));
 		smoke.setVelocity(loc.getDirection().normalize().multiply(2));
 		SmokeData sd = new SmokeData(0,smoke);

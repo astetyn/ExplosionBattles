@@ -1,6 +1,5 @@
 package main.listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,13 +8,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import main.Game;
-import main.inventory.Shop;
-import main.inventory.ShopItem;
-import main.kits.Kit;
-import main.kits.KitChooser;
+import main.layouts.MapVotingInventory;
+import main.maps.MapVoteItem;
 import main.player.PlayerEB;
-import main.weapons.Weapon;
-import main.weapons.WeaponChooser;
+import main.player.shop.Shop;
+import main.player.shop.ShopItem;
+import net.md_5.bungee.api.ChatColor;
 
 public class PlayerInventoryListener implements Listener {
 
@@ -25,11 +23,8 @@ public class PlayerInventoryListener implements Listener {
 		if(!Game.getInstance().isPlayerInGame(p)) {
 			return;
 		}
+		
 		PlayerEB playerEB = Game.getInstance().getPlayer(p);
-		if(playerEB.isInRunningGame()) {
-			e.setCancelled(true);
-			return;
-		}
 		
 		ItemStack is = e.getCurrentItem();
 		
@@ -38,67 +33,36 @@ public class PlayerInventoryListener implements Listener {
 		}else if(is.getType()==Material.AIR) {
 			return;
 		}
-		
-		for(Kit kit : KitChooser.getKits()) {
 
-			if(is.equals(kit.getItem())){
-				if(!playerEB.getBankAccount().hadBoughtItem(kit.getIndex())) {
-					p.sendMessage("Tento kit nemas zakupeny.");
-					break;
+		Shop shop = playerEB.getShop();
+		if(is.getItemMeta()!=null) {
+			if(is.getItemMeta().getLore()!=null) {
+				if(is.getItemMeta().getLore().size()>0) {
+					String hidden = is.getItemMeta().getLore().get(0).replaceAll(String.valueOf(ChatColor.COLOR_CHAR), "");
+					for(ShopItem shopItem : shop.getShopItemsAll()) {
+						if(hidden.equals(shopItem.getIndex())) {
+							shop.onClick(shopItem);
+						}
+					}
 				}
-				Kit copyKit = (Kit) kit.clone();
-				playerEB.setKit(copyKit);
-				playerEB.getKit().setPlayer(playerEB);
-				playerEB.getPlayer().sendMessage("Kit "+kit.getItem().getItemMeta().getDisplayName()+ChatColor.RESET+" uspesne nastaveny.");
-				break;
 			}
 		}
-		
-		for(ItemStack weaponItem : WeaponChooser.getItemsWeapons().keySet()) {
 
-			if(is.equals(weaponItem)){
-				Weapon weapon= WeaponChooser.getItemsWeapons().get(weaponItem);
-				if(weapon.getPrice()==-1) {
-					playerEB.getPlayer().sendMessage("Tato zbran sa neda nastavit. Da sa ziskat iba z air dropu.");
-					break;
+		if(shop.isWaitingForConfirmation()) {
+			ItemStack[] chooseItems = shop.getBuyConfirmationInventory().getChooseItems();
+			for(int i = 0; i < chooseItems.length;i++) {
+				if(is.equals(chooseItems[i])) {
+					shop.continueWithBuy(i);
 				}
-				if(!playerEB.getBankAccount().hadBoughtItem(weapon.getIndex())) {
-					p.sendMessage("Tuto zbran nemas zakupenu.");
-					break;
-				}
-				
-				Weapon copyWeapon = (Weapon) weapon.clone();
-				playerEB.setWeapon(copyWeapon);
-				playerEB.getWeapon().setPlayerEB(playerEB);
-				playerEB.getWeapon().setSetThisRound(true);
-				playerEB.getPlayer().sendMessage("Zbran "+weaponItem.getItemMeta().getDisplayName()+ChatColor.RESET+" uspesne nastavena.");
+			}
+		}
+		
+		for(MapVoteItem mvi : MapVotingInventory.getMapItems()) {
+			if(is.equals(mvi.getIs())){
+				Game.getInstance().getMapChooser().playerVoting(Game.getInstance().getPlayer(p),mvi.getIndex());
 				break;
-			}
-		}
-		
-		for(ShopItem shopItem : Shop.getShopItemsKits()) {
-			if(is.equals(shopItem.getIs())) {
-				playerEB.getBankAccount().wantsToBuy(shopItem);
-			}
-		}
-		
-		for(ShopItem shopItem : Shop.getShopItemsWeapons()) {
-			if(is.equals(shopItem.getIs())) {
-				playerEB.getBankAccount().wantsToBuy(shopItem);
-			}
-		}
-		
-		String clickedName = is.getItemMeta().getDisplayName();
-		if(clickedName!=null) {
-			clickedName = ChatColor.stripColor(clickedName);
-			for(int i=0;i < Game.getInstance().getMapChooser().getMapNames().size();i++) {
-				if(clickedName.startsWith(i+"")) {
-					Game.getInstance().getMapChooser().playerVoting(Game.getInstance().getPlayer(p),i);
-					break;
-				}
 			}
 		}
 		e.setCancelled(true);
 	}
-	
 }

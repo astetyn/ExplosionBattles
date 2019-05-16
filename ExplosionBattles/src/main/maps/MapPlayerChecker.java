@@ -6,8 +6,11 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 
+import main.Game;
 import main.Main;
+import main.MsgCenter;
 import main.configuration.MapConfiguration;
+import net.md_5.bungee.api.ChatColor;
 
 public class MapPlayerChecker {
 
@@ -31,13 +34,20 @@ public class MapPlayerChecker {
 	public void showList(Player p) {
 		
 		if(fileNames.isEmpty()) {
-			p.sendMessage("Ziadne mapy este neboli vytvorene. Vytvoris ich cez /ebsetup create <nazov>");
+			p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Žiadne mapy este neboli vytvorené. Vytvoríš ich cez /ebsetup create <name>");
 		}
 		
 		for(String name : fileNames) {
 			MapConfiguration wc = new MapConfiguration(name);
 			int spawns = wc.getSpawns();
-			p.sendMessage("Nacitana mapa: "+name+" hotova na "+ spawns+"/6" + " a spectator: "+wc.spectatorExists());
+			int maxSpawns = Game.getInstance().getConfiguration().getConfig().getInt("game.max-players");
+			boolean completed = new MapSystemChecker(name).check();
+			if(completed) {
+				p.sendMessage(MsgCenter.PREFIX+ChatColor.GREEN+"HOTOVÁ"+ChatColor.GRAY+" mapa: "+ChatColor.YELLOW+name+ChatColor.GRAY+". Spawny: "+ChatColor.YELLOW+ spawns+"/"+maxSpawns+ChatColor.GRAY+". Spectator: "+ChatColor.YELLOW+wc.spectatorExists());
+			}else {
+				p.sendMessage(MsgCenter.PREFIX+ChatColor.DARK_RED+"NEDOKONČENÁ"+ChatColor.GRAY+" mapa: "+ChatColor.YELLOW+name+ChatColor.GRAY+". Spawny: "+ChatColor.YELLOW+ spawns+"/"+maxSpawns+ChatColor.GRAY+". Spectator: "+ChatColor.YELLOW+wc.spectatorExists());
+			}
+			
 		}
 	}
 	

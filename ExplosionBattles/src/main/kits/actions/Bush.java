@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Leaves;
 
+import main.MsgCenter;
 import main.player.PlayerEB;
 import net.md_5.bungee.api.ChatColor;
 
@@ -39,7 +40,7 @@ public class Bush {
 		    BigDecimal bd = new BigDecimal(Double.toString(waitSeconds));
 		    bd = bd.setScale(1, RoundingMode.CEILING);
 		    waitSeconds = bd.doubleValue();
-			playerEB.getPlayer().sendMessage("Na dalsi krik pockaj este "+waitSeconds+" sec.");
+			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Na ďalší krík počkaj ešte "+ChatColor.YELLOW+waitSeconds+ChatColor.GRAY+" sec.");
 			return;
 		}
 		buildBush(playerEB.getPlayer().getLocation());

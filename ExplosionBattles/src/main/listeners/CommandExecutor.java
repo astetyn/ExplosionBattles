@@ -1,6 +1,8 @@
 package main.listeners;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,12 +17,15 @@ import org.bukkit.entity.Player;
 
 import main.Game;
 import main.Main;
+import main.MsgCenter;
 import main.configuration.Configuration;
+import main.configuration.LeaderBoard;
 import main.configuration.MapConfiguration;
 import main.maps.MapPlayerChecker;
 import main.maps.world.WorldTeleport;
 import main.maps.world.WorldsEB;
 import main.player.PlayerEB;
+import net.md_5.bungee.api.ChatColor;
 
 public class CommandExecutor {
 
@@ -41,6 +46,13 @@ public class CommandExecutor {
 		if(cmd.getName().equalsIgnoreCase("explosionbattles")) {	
 			return executeCmd();
 		}else if(cmd.getName().equalsIgnoreCase("explosionbattlessetup")) {
+			if(args.length==1) {
+				if(args[0].equals("invitation")) {
+					sendToBungeeCord((Player) sender, "invitation");
+					sender.sendMessage("Žiadosť poslaná bungeecordu.");
+					return true;
+				}
+			}
 			return executeCmdSetup();
 		}
 		return true;
@@ -82,7 +94,7 @@ public class CommandExecutor {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}	
-					p.sendMessage("Dakujeme za prispevok a ospravedlnte nedokonalosti. Prispeli ste tym do vyvoja tejto minihry!");
+					p.sendMessage(MsgCenter.PREFIX+ChatColor.GREEN+"Ďakujeme za príspevok a ospravedlneňte nedokonalosti. Prispeli ste tým do vývoja tejto minihry!");
 					return true;
 				}
 			}
@@ -94,22 +106,24 @@ public class CommandExecutor {
 		
 		if(command.equals("join")) {
 			if(playerEB!=null) {
-				p.sendMessage("Uz si pripojeny v hre.");
+				p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Už si pripojený/á v hre.");
 				return true;
 			}
 			Game.getInstance().playerJoin(p);
-			p.sendMessage("Pripojil si sa do hry.");
+			return true;
 		}else if(command.equals("leave")) {
 			if(!Game.getInstance().isPlayerInGame(p)) {
-				p.sendMessage("Nenachadzas sa v hre.");
+				p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Nenachádzaš sa v hre.");
 				return true;
 			}
 			Game.getInstance().playerForceLeave(playerEB);
-			p.sendMessage("Odpojil si sa z hry.");
-		}else {
-			return false;
+			p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Odpojil/a si sa z hry.");
+			return true;
+		}else if(command.equals("top")) {
+			new LeaderBoard().showLeaderBoard(p);
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	private boolean executeCmdSetup() {
@@ -123,22 +137,22 @@ public class CommandExecutor {
 				mc.loadFiles();
 				mc.showList(p);
 				return true;
-			}else if(command.equals("spawnlobby")) {
+			}else if(command.equals("lobby")) {
 				MapConfiguration wc = new MapConfiguration("lobby");
 				boolean configExists = wc.configExists();
 				
 				Location loc = p.getLocation();
 				
+				p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Spawn lobby úspešne nastavený.");
+				
 				if(!configExists) {
 					wc.getConfig().addDefault("spawnlobby", loc);
 					wc.getConfig().options().copyDefaults(true);
 					wc.saveConfig();
-					p.sendMessage("Spawn lobby uspesne nastaveny.");
 					return true;
 				}
 				wc.getConfig().set("spawnlobby", loc);
 				wc.saveConfig();
-				p.sendMessage("Spawn lobby uspesne nastaveny.");
 				return true;
 			}else if(command.equals("world")) {
 				
@@ -149,7 +163,7 @@ public class CommandExecutor {
 			}else if(command.equals("save")) {
 				WorldsEB worldsEB = new WorldsEB();
 				worldsEB.saveWorld();
-				p.sendMessage("Mozno uspesne ulozene.");
+				p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Svet možno uložený.");
 				return true;
 			}else if(command.equals("reload")) {
 				Game.getInstance().setConfiguration(new Configuration(Main.getPlugin()));
@@ -159,7 +173,7 @@ public class CommandExecutor {
 		}else if(argsSize==2) {
 			String command = args[0];
 			String mapName = args[1];
-			String[] options = {"create","delete","addspawn","removespawn","spec","rain","night"};
+			String[] options = {"create","delete","add","remove","spectator","rain","night"};
 			
 			boolean bo = false;
 			for(String s : options) {
@@ -178,53 +192,53 @@ public class CommandExecutor {
 			if(!configExists) {
 				if(command.equals("create")) {
 					wc.createConfig();
-					p.sendMessage("Mapa uspesne zaregistrovana");
+					p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Mapa úspešne vytvorená.");
 					return true;
 				}
-				p.sendMessage("Takato mapa neexistuje");
+				p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Takáto mapa neexistuje.");
 				return true;
 			}else {
 				if(command.equals("delete")) {
 					wc.deleteConfig();
-					p.sendMessage("Mapa uspesne vymazana");
-				}else if(command.equals("addspawn")) {
+					p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Mapa úspešne vymazaná.");
+				}else if(command.equals("add")) {
 					World w = p.getLocation().getWorld();
 					String[] arr = w.getName().split("/");
 					String worldName = arr[arr.length-1];
-					if(!worldName.equals(WorldsEB.getWorldNameSaved())) {
-						p.sendMessage("V tomto svete sa mapa nastavit neda! Prejdi do EB sveta cez /eb world");
+					if(!worldName.equals(new WorldsEB().getWorldNameSaved())) {
+						p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"V tomto svete sa mapa nastaviť nedá! Prejdi do EB sveta cez /ebs world.");
 						return true;
 					}
 					Location loc = p.getLocation();
-					loc.setWorld(Bukkit.getWorld(WorldsEB.getFullWorldName()));
+					loc.setWorld(Bukkit.getWorld(new WorldsEB().getFullWorldName()));
 					boolean b = wc.addspawn(loc);
 					if(b) {
-						p.sendMessage("Spawn uspesne nastaveny");
+						p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Spawn úspešne nastavený.");
 					}else {
-						p.sendMessage("Uz si nastavil vsetky spawny");
+						p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Už si nastavil všetky spawny.");
 					}
 					return true;
-				}else if(command.equals("removespawn")) {
+				}else if(command.equals("remove")) {
 					boolean b = wc.removespawn();
 					if(b) {
-						p.sendMessage("Spawn uspesne zruseny");
+						p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Spawn úspešne vymazaný.");
 					}else {
-						p.sendMessage("Ziadny spawn sa uz nema vymazat");
+						p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Žiadny spawn sa už nedá vymazať.");
 					}
-				}else if(command.equals("spec")) {
+				}else if(command.equals("spectator")) {
 					Location loc = p.getLocation();
-					loc.setWorld(Bukkit.getWorld(WorldsEB.getFullWorldName()));
+					loc.setWorld(Bukkit.getWorld(new WorldsEB().getFullWorldName()));
 					wc.setSpawnSpecator(loc);
-					p.sendMessage("Spawn na spectatora uspesne nastaveny.");
+					p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Spawn na spectatora úspešne nastavený.");
 					return true;
 				}else if(command.equals("rain")) {
 					boolean tg = wc.getConfig().getBoolean("rain");
 					if(tg) {
 						tg = false;
-						p.sendMessage("Dazd vypnuty.");
+						p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Dážď vypnutý.");
 					}else {
 						tg = true;
-						p.sendMessage("Dazd zapnuty.");
+						p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Dážď zapnutý.");
 					}
 					wc.getConfig().set("rain", tg);
 					wc.saveConfig();
@@ -232,20 +246,37 @@ public class CommandExecutor {
 					boolean tg = wc.getConfig().getBoolean("night");
 					if(tg) {
 						tg = false;
-						p.sendMessage("Noc vypnuta.");
+						p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Noc vypnutá.");
 					}else {
 						tg = true;
-						p.sendMessage("Noc zapnuta.");
+						p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Noc zapnutá.");
 					}
 					wc.getConfig().set("night", tg);
 					wc.saveConfig();
 				}else {
-					p.sendMessage("Tato mapa uz existuje.");
+					p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Takáto mapa už existuje.");
 				}
 			}
 			return true;
 		}
 		return false;
 	}
+	
+	private void sendToBungeeCord(Player p, String channel){
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+        try {
+            out.writeUTF(channel);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        p.sendPluginMessage(Main.getPlugin(), "explosionbattles", b.toByteArray());
+        try {
+			b.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
 	
 }

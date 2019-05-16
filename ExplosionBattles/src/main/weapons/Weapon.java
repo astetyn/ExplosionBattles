@@ -1,60 +1,41 @@
 package main.weapons;
 
+import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
-import main.Buyable;
 import main.player.PlayerEB;
+import main.weapons.data.WeaponData;
 
-public abstract class Weapon implements Cloneable, Buyable {
+public abstract class Weapon {
 
-	private long lastUse;
-	private double originalCooldown = -1;
-	private double cooldown;
-	private int power;
-	private String accuracy;
-	private ItemStack item;
+	private double cooldown = -1;
+	private long lastUse = 0;
 	private PlayerEB playerEB;
-	private boolean setThisRound = false;
 	
-	public Weapon() {
-	}
+	public abstract WeaponData getWeaponData();
 	
 	public boolean onInteract(PlayerInteractEvent event) {
 		return true;
 	}
 
 	public double getCooldown() {
+		if(cooldown == -1) {
+			cooldown = getWeaponData().getDefaultCooldown();
+		}
 		return cooldown;
 	}
-
+	
 	public void setCooldown(double cooldown) {
 		this.cooldown = cooldown;
-		if(originalCooldown == -1) {
-			this.originalCooldown = cooldown;
-		}
-	}
-
-	public long getLastUse() {
-		return lastUse;
-	}
-
-	public void setLastUse(long lastUse) {
-		this.lastUse = lastUse;
-	}
-
-	public abstract ItemStack getItem();
-	
-	public void setItem(ItemStack is) {
-		this.item = is;
 	}
 	
 	public void equip() {
-		if(item==null) {
+		if(getWeaponData().getItem()==null) {
 			return;
 		}
-		playerEB.getPlayer().getInventory().setItem(0, item); 
-		this.cooldown = this.originalCooldown;
+		playerEB.getPlayer().getInventory().setItem(0, getWeaponData().getItem()); 
+		cooldown = getWeaponData().getDefaultCooldown();
+		getPlayerEB().getPlayer().sendTitle(ChatColor.BLUE+""+ChatColor.BOLD+"Ovládanie zbrane", ChatColor.AQUA+""+ChatColor.ITALIC+getWeaponData().getManualMsg(),20,40,40);
 	}
 
 	public PlayerEB getPlayerEB() {
@@ -65,40 +46,13 @@ public abstract class Weapon implements Cloneable, Buyable {
 		this.playerEB = playerEB;
 	}
 	
-	public void tick() {
-		
-	}
+	public void tick() {};	
 	
-	public Object clone() { 
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return null; 
+	public long getLastUse() {
+		return lastUse;
 	}
 
-	public int getPower() {
-		return power;
-	}
-
-	public void setPower(int power) {
-		this.power = power;
-	}
-
-	public String getAccuracy() {
-		return accuracy;
-	}
-
-	public void setAccuracy(String accuracy) {
-		this.accuracy = accuracy;
-	}
-
-	public boolean isSetThisRound() {
-		return setThisRound;
-	}
-
-	public void setSetThisRound(boolean setThisRound) {
-		this.setThisRound = setThisRound;
+	public void setLastUse(long lastUse) {
+		this.lastUse = lastUse;
 	}
 }

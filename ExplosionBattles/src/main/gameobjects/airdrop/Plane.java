@@ -40,21 +40,25 @@ public class Plane {
 		this.planeLoc = startLoc;
 		
 		if(Math.abs(xTotal)>Math.abs(zTotal)) {
-			maxTicks = (int) ((int) xTotal/pushCoef);
-			pushX = pushCoef;
-			pushZ = zTotal/(xTotal/pushCoef);
+			maxTicks = (int) ((int) Math.abs(xTotal)/pushCoef);
 			if(xTotal>0) {
+				pushX = pushCoef;
+				pushZ = zTotal/(xTotal/pushCoef);
 				rotation = 0;
 			}else {
+				pushX = pushCoef*-1;
+				pushZ = zTotal/(xTotal/pushCoef)*-1;
 				rotation = 90;
 			}
 		}else {
-			maxTicks = (int) ((int) zTotal/pushCoef);
-			pushX = xTotal/(zTotal/pushCoef);
-			pushZ = pushCoef;
+			maxTicks = (int) ((int) Math.abs(zTotal)/pushCoef);
 			if(zTotal>0) {
+				pushX = xTotal/(zTotal/pushCoef);
+				pushZ = pushCoef;
 				rotation = 180;
 			}else {
+				pushX = xTotal/(zTotal/pushCoef)*-1;
+				pushZ = pushCoef*-1;
 				rotation = 270;
 			}
 		}	

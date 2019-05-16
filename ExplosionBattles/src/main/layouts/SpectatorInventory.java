@@ -1,4 +1,4 @@
-package main.inventory;
+package main.layouts;
 
 import java.util.ArrayList;
 
@@ -20,6 +20,7 @@ private PlayerEB playerEB;
 	}
 	
 	private void giveItems() {
+		playerEB.getPlayer().getInventory().clear();
 		PlayerInventory inv = playerEB.getPlayer().getInventory();
 		inv.setHeldItemSlot(0);
 		

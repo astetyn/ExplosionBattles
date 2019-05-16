@@ -4,19 +4,26 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
 import main.Game;
+import main.Main;
+import main.MsgCenter;
+import main.player.GameStage;
 import main.player.PlayerEB;
 import main.stages.StageEnding;
+import net.md_5.bungee.api.ChatColor;
 
 public class EntityDamageListener implements Listener {
 
@@ -31,12 +38,7 @@ public class EntityDamageListener implements Listener {
 			return;
 		}
 		
-		if(!Game.getInstance().getPlayer(p).isInRunningGame()) {
-			e.setCancelled(true);
-			return;
-		}
-		
-		if(Game.getInstance().getStage() instanceof StageEnding) {
+		if(Game.getInstance().getPlayer(p).getGameStage()!=GameStage.GAME_RUNNING) {
 			e.setCancelled(true);
 			return;
 		}
@@ -51,6 +53,12 @@ public class EntityDamageListener implements Listener {
 				Game.getInstance().setLastShootPlayerEB(null);
 			}
 
+			double damage = e.getDamage();
+			
+			damage/=4;
+			
+			e.setDamage(damage);
+			
 			boolean playerWillDie = playerCheckDamage(p,e.getDamage());
 			if(playerWillDie) {
 				PlayerEB playerEB = Game.getInstance().getPlayer(p);
@@ -61,16 +69,10 @@ public class EntityDamageListener implements Listener {
 				}
 				e.setCancelled(true);
 			}
-			
+				
 			if(damager!=null) {
-				damager.getPlayer().sendMessage("Zasah");
+				damager.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GOLD+ChatColor.BOLD+"Hit!");
 			}
-			
-			double damage = e.getDamage();
-			
-			damage/=4;
-			
-			e.setDamage(damage);
 			
 			return;
 		}
@@ -116,6 +118,32 @@ public class EntityDamageListener implements Listener {
 		}
 		
 		if(mv==null) {
+			
+			if(damager.getType()==EntityType.FIREBALL) {
+				if(!damager.hasMetadata("fireball")) {
+					e.setCancelled(true);
+					return;
+				}
+				Location loc = victim.getLocation();
+				Entity tnt = loc.getWorld().spawn(loc,TNTPrimed.class);
+				MetadataValue mvv = damager.getMetadata("fireball").get(0);
+				String playerName = mvv.asString();
+				tnt.setMetadata("tnt", new FixedMetadataValue(Main.getPlugin(), playerName));
+				((TNTPrimed)tnt).setYield(10);
+				((TNTPrimed)tnt).setFuseTicks(0);
+			}else if(damager.getType()==EntityType.SMALL_FIREBALL) {
+				if(!damager.hasMetadata("smallfireball")) {
+					e.setCancelled(true);
+					return;
+				}
+				Location loc = victim.getLocation();
+				Entity tnt = loc.getWorld().spawn(loc,TNTPrimed.class);
+				MetadataValue mvv = damager.getMetadata("smallfireball").get(0);
+				String playerName = mvv.asString();
+				tnt.setMetadata("tnt", new FixedMetadataValue(Main.getPlugin(), playerName));
+				((TNTPrimed)tnt).setFuseTicks(0);
+			}
+			
 			e.setCancelled(true);
 			return;
 		}
@@ -130,7 +158,7 @@ public class EntityDamageListener implements Listener {
 			return;
 		}
 		
-		p.sendMessage("Udeleny damage: "+damage);
+		p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Zásah spôsobil: "+ChatColor.RED+ChatColor.BOLD+damage+ChatColor.GRAY+" hp zranenie.");
 		
 		if(playerCheckDamage(victim, damage)) {
 			Game.getInstance().playerDied(playerEB,playerEB2);

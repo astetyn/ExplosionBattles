@@ -2,8 +2,10 @@ package main.maps;
 
 import org.bukkit.Location;
 
+import main.MsgCenter;
 import main.configuration.MapConfiguration;
 import main.player.PlayerEB;
+import net.md_5.bungee.api.ChatColor;
 
 public class LocationTeleport {
 
@@ -25,7 +27,7 @@ public class LocationTeleport {
 		if(gameLoc == GameLocation.LOBBY) {
 			LobbySystemChecker lsc = new LobbySystemChecker();
 			if(!lsc.lobbyExists()) {
-				playerEB.getPlayer().sendMessage("Lokacia lobby je poskodena alebo neexistuje. Kontaktuj AT.");
+				playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Lokácia lobby je poškodená alebo neexistuje. Kontaktuj vedenie.");
 				return;
 			}
 			MapConfiguration wc = new MapConfiguration("lobby");

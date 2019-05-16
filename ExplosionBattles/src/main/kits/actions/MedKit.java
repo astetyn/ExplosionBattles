@@ -4,7 +4,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import main.MsgCenter;
 import main.player.PlayerEB;
+import net.md_5.bungee.api.ChatColor;
 
 public class MedKit {
 
@@ -25,7 +27,7 @@ public class MedKit {
 	
 	public void wantsToUseMedKit() {
 		playerEB.getPlayer().setHealth(20);
-		playerEB.getPlayer().sendMessage("Zivot doplneny.");
+		playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GREEN+"Život doplnený.");
 		playerEB.getPlayer().getInventory().removeItem(item);
 	}
 	

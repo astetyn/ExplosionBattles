@@ -11,9 +11,11 @@ import org.bukkit.metadata.MetadataValue;
 
 import main.Game;
 import main.Main;
+import main.MsgCenter;
 import main.configuration.MapConfiguration;
 import main.player.PlayerEB;
 import main.weapons.HeavyExplosiveSniper;
+import net.md_5.bungee.api.ChatColor;
 
 public class AirDrop {
 
@@ -54,7 +56,7 @@ public class AirDrop {
 		int height = checkArea.getBlockY();
 		
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
-			playerEB.getPlayer().sendMessage("Zasoby prichadzaju, sledujte oblohu!");
+			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+MsgCenter.ALLERT+ChatColor.WHITE+"Lietadlo prichádza, čoskoro zhodí balík! "+MsgCenter.ALLERT);
 		}
 		
 		Location startLoc = new Location(locationInArena.getWorld(),x1,height,z1);
@@ -108,15 +110,22 @@ public class AirDrop {
 	    fwm.setPower(1);
 	    fw.setFireworkMeta(fwm);
 		
+	    for(PlayerEB pEB : Game.getInstance().getPlayers()) {
+	    	pEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+playerEB.getPlayer().getName()+ChatColor.GRAY+" našiel AirDrop.");
+	    }
+	    
 		if(bonus.equals("weaponcooldown")) {
 			double gunCooldown = playerEB.getWeapon().getCooldown();
 			playerEB.getWeapon().setCooldown(gunCooldown/2);
-			playerEB.getPlayer().sendMessage("Airdrop zobraty! Nasiel si zasobnik na rychle nabijanie!");
+			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+ChatColor.BOLD+"AIRDROP zobratý!"+ChatColor.GOLD+ChatColor.ITALIC+" Našiel si zásobník na rýchle nabíjanie!");
+			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GOLD+"Rýchlosť nabíjania zdvojnásobená.");
 		}else if(bonus.equals("heavysniper")) {
 			playerEB.setWeapon(new HeavyExplosiveSniper(playerEB));
 			playerEB.getWeapon().equip();
-			playerEB.getPlayer().sendMessage("Airdrop zobraty! Nasiel si legendarnu Heavy Explosive Sniper!");
+			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+ChatColor.BOLD+"AIRDROP zobratý!"+ChatColor.GOLD+" Našiel si silnú Heavy Sniper!");
+			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+ChatColor.BOLD+"Heavy Explosive Sniper"+ChatColor.GOLD+" pridaná ako hlavná zbraň.");
 		}
+		playerEB.getUserAccount().addCoinsWithNotification(5);
 	}
 
 	public boolean isInProcess() {

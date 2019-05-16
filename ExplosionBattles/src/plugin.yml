@@ -1,6 +1,6 @@
-name: ExplosionBattles-SNAPSHOT
+name: ExplosionBattles
 
-author: astetyn
+author: astetyne
 
 main: main.Main
 
@@ -9,14 +9,14 @@ commands:
     explosionbattles: 
       permission: explosionbattles.base
       description: Zakladny cmd na hracske veci
-      usage: /ebd <join;leave>
-      aliases: ebd
+      usage: /eb <join ; leave ; top>
+      aliases: eb
       
     explosionbattlessetup: 
        permission: explosionbattles.setup
        description: Zakladny prikaz na spravovanie minihry
-       usage: /ebdsetup <option> [map]
-       aliases: ebdsetup
+       usage: /ebsetup <option> [map]
+       aliases: [ebsetup, ebs]
       
 permissions:
    explosionbattles.*:
@@ -32,4 +32,4 @@ permissions:
    explosionbattles.setup:
      default: op
         
-version: 0.0.2 Alpha
+version: 0.3 SNAPSHOT

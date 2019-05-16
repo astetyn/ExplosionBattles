@@ -2,6 +2,7 @@ package main.stages;
 
 import main.Game;
 import main.configuration.Configuration;
+import main.player.GameStage;
 import main.player.PlayerEB;
 
 public class StageEnding extends Stage {
@@ -18,8 +19,7 @@ public class StageEnding extends Stage {
 	
 	public void start() {
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
-			playerEB.setInRunningGame(false);
-			playerEB.getWeapon().setSetThisRound(false);
+			playerEB.setGameStage(GameStage.GAME_ENDING);
 			playerEB.getPlayer().setHealth(20);
 			playerEB.getStatusBoard().setup("Ending phase...");
 		}
@@ -31,12 +31,17 @@ public class StageEnding extends Stage {
 		}
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
 			int remainingTime = (getFinalTicks()-getTicks())/20;
-			playerEB.getStatusBoard().setData(remainingTime);
+			playerEB.getStatusBoard().tick(remainingTime);
 		}
 		if(getTicks()==getFinalTicks()) {
 			Game.getInstance().setStage(null);
 			Game.getInstance().setStage(new StageLobbyLaunching());
 		}
+	}
+
+	@Override
+	public void end() {
+		
 	}
 
 }

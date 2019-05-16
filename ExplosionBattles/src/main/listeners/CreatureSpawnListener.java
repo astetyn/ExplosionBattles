@@ -19,8 +19,21 @@ public class CreatureSpawnListener implements Listener{
 			return;
 		}
 		
-		if(e.getSpawnReason()==SpawnReason.NATURAL&&(e.getLocation().getWorld()==wEB.getGameWorld())) {
-			e.setCancelled(true);
+		if(e.getSpawnReason()==SpawnReason.CUSTOM) {
+			return;
 		}
+		
+		if(wEB.getGameWorld()!=null) {
+			if(e.getLocation().getWorld()==wEB.getGameWorld()) {
+				e.setCancelled(true);
+			}
+		}
+		if(wEB.getSavedWorld()!=null) {
+			if(e.getLocation().getWorld()==wEB.getSavedWorld()) {
+				e.setCancelled(true);
+			}
+		}
+		
+		
 	}
 }

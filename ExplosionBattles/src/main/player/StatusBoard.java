@@ -7,6 +7,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
+import main.Game;
 import net.md_5.bungee.api.ChatColor;
 
 public class StatusBoard {
@@ -14,7 +15,17 @@ public class StatusBoard {
 	private ScoreboardManager sm = Bukkit.getScoreboardManager();
 	private Scoreboard board;
 	private Objective objective;
-	private Score data = null;
+	private Score emptyLine;
+	private Score time;
+	private Score emptyLine2;
+	private Score players;
+	private Score emptyLine3;
+	private Score coins;
+	private Score points;
+	private String timeName = "";
+	private String playersName = ChatColor.YELLOW+"Hráči v hre: "+ChatColor.RESET;
+	private String coinsName = ChatColor.GREEN+""+ChatColor.BOLD+"Coins: "+ChatColor.RESET;
+	private String pointsName = ChatColor.BLUE+""+ChatColor.BOLD+"EP: "+ChatColor.RESET;
 	private PlayerEB playerEB;
 	private final String objName = "eb";
 	
@@ -28,25 +39,36 @@ public class StatusBoard {
 		}
 	}
 	
-	public void setup(String text) {
+	public void setup(String timeName) {
+		this.timeName = ChatColor.YELLOW+""+ChatColor.BOLD+timeName+" "+ChatColor.RESET;
 		resetScores();
-		data=objective.getScore(text);
-		data.setScore(1);
 		playerEB.getPlayer().setScoreboard(board);
 	}
 	
-	public void setClean() {
+	public void clean() {
 		playerEB.getPlayer().setScoreboard(sm.getNewScoreboard());
 	}
 	
-	public void setData(int i) {
-		for(Objective o : board.getObjectives()) {
-			for(String entry : board.getEntries()) {
-				Score s = o.getScore(entry);
-				s.setScore(i);
-			}
+	public void tick(int remainingTime) {
+		resetScores();
+		emptyLine=objective.getScore(ChatColor.RED+"");
+		emptyLine.setScore(7);
+		if(remainingTime==-1) {
+			time=objective.getScore(timeName);
+		}else {
+			time=objective.getScore(timeName+remainingTime);
 		}
-		playerEB.getPlayer().setScoreboard(board);
+		time.setScore(6);
+		emptyLine2=objective.getScore(ChatColor.BLUE+"");
+		emptyLine2.setScore(5);
+		players=objective.getScore(playersName+Game.getInstance().getPlayers().size());
+		players.setScore(4);
+		emptyLine3=objective.getScore("");
+		emptyLine3.setScore(3);
+		coins=objective.getScore(coinsName+playerEB.getUserAccount().getCoins());
+		coins.setScore(2);
+		points=objective.getScore(pointsName+playerEB.getUserAccount().getEPoints());
+		points.setScore(1);
 	}
 	
 	private void resetScores() {
@@ -59,7 +81,7 @@ public class StatusBoard {
 		board = sm.getNewScoreboard();
 		objective = board.registerNewObjective(objName, "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		objective.setDisplayName(ChatColor.GOLD+"eb");
+		objective.setDisplayName(ChatColor.DARK_GRAY+""+ChatColor.BOLD+"["+ChatColor.GOLD+ChatColor.BOLD+"Explosion Battles"+ChatColor.DARK_GRAY+ChatColor.BOLD+"]");
 		playerEB.getPlayer().setScoreboard(board);
 	}
 

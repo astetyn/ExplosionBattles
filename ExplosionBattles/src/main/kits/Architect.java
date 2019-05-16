@@ -1,7 +1,5 @@
 package main.kits;
 
-import java.util.ArrayList;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -13,34 +11,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Stairs;
 
+import main.MsgCenter;
+import main.kits.data.ArchitectData;
+import main.kits.data.KitData;
 import main.player.PlayerEB;
-import main.weapons.MiniGun;
-import main.weapons.Weapon;
 import net.md_5.bungee.api.ChatColor;
 
-public class Architect extends Kit{
-
-	private Weapon weapon = new MiniGun(null);
+public class Architect extends Kit {
+	
 	private long lastBuild = 0;
-	private double cooldownBuild = 0.5;
-	private final int price = 10000;
-	private final boolean avaibleForVip = false;
-	private final String index = "kit_architect";
+	private final double cooldownBuild = 0.5;
+	private final KitData kitData = new ArchitectData();
 	
 	public Architect(PlayerEB playerEB) {
 		setPlayer(playerEB);
-		setDefaultWeapon(weapon);
 	}
 
 	@Override
 	public void startInit() {
-		if(getPlayerEB().getWeapon()==null) {
-			weapon.setPlayerEB(getPlayerEB());
-			getPlayerEB().setWeapon(weapon);
-		}else if(!getPlayerEB().getWeapon().isSetThisRound()){
-			weapon.setPlayerEB(getPlayerEB());
-			getPlayerEB().setWeapon(weapon);
-		}
 		
 		ItemStack is2 = new ItemStack(Material.IRON_AXE,1);
 		ItemMeta im2 = is2.getItemMeta();
@@ -67,7 +55,7 @@ public class Architect extends Kit{
 			double diff = actualTime - lastBuild;
 			double seconds = diff / 1000;
 			if(seconds<cooldownBuild) {
-				getPlayerEB().getPlayer().sendMessage("Stavas moc rychlo.");
+				getPlayerEB().getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Staváš moc rýchlo!");
 				return;
 			}
 			lastBuild = System.currentTimeMillis();
@@ -76,48 +64,24 @@ public class Architect extends Kit{
 		if(is.getType()==Material.IRON_AXE) {
 			boolean b = wantsToBuildStairs();
 			if(!b) {
-				getPlayerEB().getPlayer().sendMessage("Na schody nie je dost miesta.");
+				getPlayerEB().getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Na schody nie je dosť miesta.");
 			}
 		}else if(is.getType()==Material.IRON_PICKAXE) {
 			boolean b = wantsToBuildWall();
 			if(!b) {
-				getPlayerEB().getPlayer().sendMessage("Na stenu nie je dost miesta.");
+				getPlayerEB().getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Na stenu nie je dosť miesta.");
 			}
 		}else if(is.getType()==Material.IRON_SPADE) {
 			boolean b = wantsToBuildPlatform();
 			if(!b) {
-				getPlayerEB().getPlayer().sendMessage("Na platformu nie je dost miesta.");
+				getPlayerEB().getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Na platformu nie je dosť miesta.");
 			}
 		}	
 	}
 	
 	@Override
-	public ItemStack getItem() {
-		ItemStack item = new ItemStack(Material.QUARTZ_STAIRS,1);
-		ItemMeta im = item.getItemMeta();
-		ArrayList<String> l = new ArrayList<String>();
-		l.add(ChatColor.GOLD+"Build your own structures.");
-		l.add(ChatColor.WHITE+"Obsahuje zbran "+weapon.getItem().getItemMeta().getDisplayName());
-		l.add("Moznost stavat schody, steny, plosiny");
-		im.setLore(l);
-		im.setDisplayName(ChatColor.YELLOW+"Architect");
-		item.setItemMeta(im);
-		return item;
-	}
-	
-	@Override
-	public int getPrice() {
-		return price;
-	}
-
-	@Override
-	public boolean isAvaibleForVip() {
-		return avaibleForVip;
-	}
-
-	@Override
-	public String getIndex() {
-		return index;
+	public KitData getKitData() {
+		return kitData;
 	}
 	
 	public boolean wantsToBuildPlatform() {

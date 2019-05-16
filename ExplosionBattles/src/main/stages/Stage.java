@@ -1,24 +1,15 @@
 package main.stages;
 
-public class Stage {
+public abstract class Stage {
 
 	private int ticks = 0;
 	private int finalTicks = 0;
-	
-	public Stage() {
-	}
 
-	public void start() {
-		
-	}
+	public abstract void start();
 	
-	public void tick() {
-		
-	}
+	public abstract void tick();
 	
-	public void end() {
-		
-	}
+	public abstract void end();
 
 	public int getTicks() {
 		return ticks;

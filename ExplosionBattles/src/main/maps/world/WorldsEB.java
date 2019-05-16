@@ -24,12 +24,12 @@ import main.Main;
 
 public class WorldsEB {
 
-	private final static String WORLD_NAME = Game.getInstance().getConfiguration().getConfig().getString("world.world-name");
-	private final static String WORLD_NAME_SAVED = WORLD_NAME + "-BACKUP";
-	private final static String PATH = Main.getPlugin().getDataFolder().getPath()+"/";
+	private String WORLD_NAME;
+	private String WORLD_NAME_SAVED;
+	private final String PATH = Main.getPlugin().getDataFolder().getPath()+"/";
 	
-	private final static String FULL_WORLD_NAME = PATH + WORLD_NAME;
-	private final static String FULL_WORLD_NAME_SAVED = PATH + WORLD_NAME_SAVED;
+	private String FULL_WORLD_NAME;
+	private String FULL_WORLD_NAME_SAVED;
 
 	private World world;
 	private World savedWorld;
@@ -40,6 +40,11 @@ public class WorldsEB {
 	private boolean night;
 	
 	public WorldsEB() {
+		
+		WORLD_NAME = Game.getInstance().getConfiguration().getConfig().getString("world.world-name");
+		WORLD_NAME_SAVED = WORLD_NAME + "-BACKUP";
+		FULL_WORLD_NAME = PATH + WORLD_NAME;
+		FULL_WORLD_NAME_SAVED = PATH + WORLD_NAME_SAVED;
 		
 		savedWorld = Bukkit.getServer().getWorld(FULL_WORLD_NAME_SAVED);
 		world = Bukkit.getServer().getWorld(FULL_WORLD_NAME);
@@ -143,15 +148,15 @@ public class WorldsEB {
 	private void copyWorld(String source, String target){
 
 		File sourceFolder = new File(source);
-		 
 		File targetFolder = new File(target);
 		
 	    try {
 	        ArrayList<String> ignore = new ArrayList<String>(Arrays.asList("uid.dat", "session.dat"));
 	        if(!ignore.contains(sourceFolder.getName())) {
 	            if(sourceFolder.isDirectory()) {
-	                if(!targetFolder.exists())
-	                targetFolder.mkdirs();
+	                if(!targetFolder.exists()) {
+	                	targetFolder.mkdirs();
+	                }
 	                String files[] = sourceFolder.list();
 	                for (String file : files) {
 	                    File srcFile = new File(sourceFolder, file);
@@ -163,14 +168,15 @@ public class WorldsEB {
 	                OutputStream out = new FileOutputStream(targetFolder);
 	                byte[] buffer = new byte[1024];
 	                int length;
-	                while ((length = in.read(buffer)) > 0)
+	                while ((length = in.read(buffer)) > 0) {
 	                    out.write(buffer, 0, length);
+	                }
 	                in.close();
 	                out.close();
 	            }
 	        }
 	    } catch (IOException e) {
-	 
+	    	e.printStackTrace();
 	    }
 	}
 	
@@ -227,11 +233,11 @@ public class WorldsEB {
 		this.night = night;
 	}
 	
-	public static String getFullWorldName() {
+	public String getFullWorldName() {
 		return FULL_WORLD_NAME;
 	}
 	
-	public static String getWorldNameSaved() {
+	public String getWorldNameSaved() {
 		return WORLD_NAME_SAVED;
 	}
 }

@@ -2,24 +2,34 @@ package main.player;
 
 import org.bukkit.entity.Player;
 
-import main.kits.BasicKit;
+import main.kits.Basic;
 import main.kits.Kit;
+import main.player.shop.Shop;
+import main.weapons.AssaultShooter;
 import main.weapons.Weapon;
 
 public class PlayerEB {
 
 	private Player player;
-	private boolean inRunningGame = false;
-	private Kit kit = new BasicKit(this);
+	private GameStage gameStage;
+	private Kit kit;
 	private StatusBoard statusBoard;
 	private Weapon weapon;
-	private BankAccount bankAccount;
+	private UserAccount userAccount;
+	private Shop shop;
+	private PlayerDataSaver playerDataSaver;
 	private boolean vip;
 	
 	public PlayerEB(Player player) {
 		this.player = player;
+		this.gameStage = GameStage.LOBBY_WAITING;
+		this.kit = new Basic(this);
+		this.weapon = new AssaultShooter(this);
 		this.statusBoard = new StatusBoard(this);
-		this.bankAccount = new BankAccount(this);
+		this.userAccount = new UserAccount(this);
+		this.shop = new Shop(this);
+		this.playerDataSaver = new PlayerDataSaver(this);
+		this.vip = player.hasPermission("explosionbattles.vip");
 	}
 
 	public Player getPlayer() {
@@ -42,14 +52,6 @@ public class PlayerEB {
 		return statusBoard;
 	}
 
-	public boolean isInRunningGame() {
-		return inRunningGame;
-	}
-
-	public void setInRunningGame(boolean inRunningGame) {
-		this.inRunningGame = inRunningGame;
-	}
-
 	public Weapon getWeapon() {
 		return weapon;
 	}
@@ -58,16 +60,28 @@ public class PlayerEB {
 		this.weapon = weapon;
 	}
 
-	public BankAccount getBankAccount() {
-		return bankAccount;
+	public UserAccount getUserAccount() {
+		return userAccount;
 	}
 
 	public boolean isVip() {
 		return vip;
 	}
 
-	public void setVip(boolean vip) {
-		this.vip = vip;
+	public PlayerDataSaver getPlayerDataSaver() {
+		return playerDataSaver;
+	}
+
+	public GameStage getGameStage() {
+		return gameStage;
+	}
+
+	public void setGameStage(GameStage gameStage) {
+		this.gameStage = gameStage;
+	}
+
+	public Shop getShop() {
+		return shop;
 	}
 	
 }

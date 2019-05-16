@@ -1,9 +1,11 @@
 package main.maps;
 
 import main.Game;
+import main.MsgCenter;
 import main.configuration.Configuration;
 import main.configuration.MapConfiguration;
 import main.player.PlayerEB;
+import net.md_5.bungee.api.ChatColor;
 
 public class MapSystemChecker {
 
@@ -19,7 +21,7 @@ public class MapSystemChecker {
 			return true;
 		}else {
 			for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
-				playerEB.getPlayer().sendMessage("Mapa je poskodena alebo neexistuje, nacitavanie zlyhalo, kontaktuj vedenie.");
+				playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Mapa je poškodená alebo neexistuje, načitavanie zlyhalo, kontaktuj vedenie.");
 			}
 			return false;
 		}

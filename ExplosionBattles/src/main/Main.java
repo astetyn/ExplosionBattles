@@ -6,15 +6,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import main.inventory.InventoryManager;
+import main.configuration.Configuration;
 import main.listeners.BlockExplodeListener;
 import main.listeners.BlockIgniteListener;
 import main.listeners.CommandExecutor;
 import main.listeners.CreatureSpawnListener;
 import main.listeners.EntityDamageListener;
 import main.listeners.EntityExplodeListener;
+import main.listeners.EntityRegainHealthListener;
 import main.listeners.FoodLevelChangeListener;
 import main.listeners.PlayerBlockListener;
+import main.listeners.PlayerCloseInventoryListener;
 import main.listeners.PlayerCommandPreprocessListener;
 import main.listeners.PlayerInteractListener;
 import main.listeners.PlayerInventoryListener;
@@ -23,7 +25,6 @@ import main.listeners.PlayerLeaveListener;
 import main.listeners.PlayerSwapHandItemsListener;
 import main.listeners.WeatherListener;
 import main.maps.world.WorldsEB;
-import main.misc.locations.LocationSaver;
 import main.player.PlayerEB;
 
 public class Main extends JavaPlugin {
@@ -33,6 +34,7 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
+		Game.getInstance().setConfiguration(new Configuration(this));
 		PluginManager pluginManager = Bukkit.getServer().getPluginManager();
 		pluginManager.registerEvents(new PlayerInteractListener(),this);
 		pluginManager.registerEvents(new PlayerBlockListener(),this);
@@ -40,14 +42,18 @@ public class Main extends JavaPlugin {
 		pluginManager.registerEvents(new PlayerLeaveListener(),this);
 		pluginManager.registerEvents(new PlayerCommandPreprocessListener(),this);
 		pluginManager.registerEvents(new PlayerSwapHandItemsListener(),this);
-		pluginManager.registerEvents(new EntityExplodeListener(),this);
+		pluginManager.registerEvents(new PlayerCloseInventoryListener(),this);
 		pluginManager.registerEvents(new PlayerItemListener(),this);
+		pluginManager.registerEvents(new EntityExplodeListener(),this);
 		pluginManager.registerEvents(new EntityDamageListener(),this);
 		pluginManager.registerEvents(new FoodLevelChangeListener(),this);
 		pluginManager.registerEvents(new WeatherListener(),this);
 		pluginManager.registerEvents(new CreatureSpawnListener(),this);
 		pluginManager.registerEvents(new BlockExplodeListener(),this);
 		pluginManager.registerEvents(new BlockIgniteListener(),this);
+		pluginManager.registerEvents(new EntityRegainHealthListener(),this);
+		
+		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "explosionbattles");
 		
 		WorldsEB worldsEB = new WorldsEB();
 		worldsEB.loadSavedWorld();
@@ -57,8 +63,8 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
-			LocationSaver.getInstance().loadAndTeleport(playerEB);
-			InventoryManager.getInstance().loadInventory(playerEB);
+			playerEB.getStatusBoard().clean();
+			playerEB.getPlayerDataSaver().restoreAll();
 		}
 		WorldsEB worldsEB = new WorldsEB();
 		worldsEB.unloadSavedWorld();

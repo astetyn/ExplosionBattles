@@ -2,43 +2,32 @@ package main.weapons;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import main.Main;
+import main.MsgCenter;
 import main.player.PlayerEB;
+import main.weapons.data.HeavyExplosiveSniperData;
+import main.weapons.data.WeaponData;
 import net.md_5.bungee.api.ChatColor;
 
 public class HeavyExplosiveSniper extends Weapon{
 
-	private double cooldown = 10;
-	private int power = 200;
-	private String accuracy = "High";
-	private final int price = -1;
-	private final boolean avaibleForVip = false;
-	private final String index = "weapnon_heavyexplosivesniper";
+	private HeavyExplosiveSniperData heavyExplosiveSniperData = new HeavyExplosiveSniperData();
 	
 	public HeavyExplosiveSniper(PlayerEB playerEB) {
-		
-		super.setCooldown(cooldown);
-		super.setPlayerEB(playerEB);
-		super.setPower(power);
-		super.setAccuracy(accuracy);
-		super.setItem(getItem());
-		
+		super.setPlayerEB(playerEB);	
 	}
 
 	@Override
 	public boolean onInteract(PlayerInteractEvent event) {
 		ItemStack is = event.getPlayer().getInventory().getItemInMainHand();
-		if(is.getType()==Material.BLAZE_ROD) {
+		if(is.equals(getWeaponData().getItem())) {
 			wantsToFire(getPlayerEB());
 		}
 		return true;
@@ -54,7 +43,7 @@ public class HeavyExplosiveSniper extends Weapon{
 		    BigDecimal bd = new BigDecimal(Double.toString(waitSeconds));
 		    bd = bd.setScale(1, RoundingMode.CEILING);
 		    waitSeconds = bd.doubleValue();
-			playerEB.getPlayer().sendMessage("Na dalsiu strelu pockaj este "+waitSeconds+" sec.");
+		    playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Nabíjanie ešte "+ChatColor.YELLOW+ChatColor.BOLD+waitSeconds+ChatColor.GRAY+" sec...");
 			return;
 		}
 		setLastUse(System.currentTimeMillis());
@@ -67,34 +56,10 @@ public class HeavyExplosiveSniper extends Weapon{
 		fb.setVelocity(p.getLocation().getDirection().normalize().multiply(2));
 		fb.setMetadata("fireball", new FixedMetadataValue(Main.getPlugin(), p.getName()));
 	}
-	
-	@Override
-	public ItemStack getItem() {
-		ItemStack is = new ItemStack(Material.BLAZE_ROD,1);
-		ItemMeta im = is.getItemMeta();
-		ArrayList<String> l = new ArrayList<String>();
-		l.add(ChatColor.WHITE+"Nabijanie: "+ ChatColor.GOLD + getCooldown());
-		l.add(ChatColor.WHITE+"Sila: "+ ChatColor.GOLD + getPower());
-		l.add(ChatColor.WHITE+"Presnost: "+ ChatColor.GOLD + getAccuracy());
-		im.setLore(l);
-		im.setDisplayName(ChatColor.RED+""+ChatColor.BOLD+"Heavy Explosive Sniper");
-		is.setItemMeta(im);
-		return is;
-	}
-	
-	@Override
-	public int getPrice() {
-		return price;
-	}
 
 	@Override
-	public boolean isAvaibleForVip() {
-		return avaibleForVip;
-	}
-
-	@Override
-	public String getIndex() {
-		return index;
+	public WeaponData getWeaponData() {
+		return heavyExplosiveSniperData;
 	}
 
 }

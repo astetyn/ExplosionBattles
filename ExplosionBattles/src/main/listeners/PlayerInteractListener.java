@@ -11,13 +11,10 @@ import org.bukkit.inventory.ItemStack;
 
 import main.Game;
 import main.gameobjects.airdrop.AirDrop;
-import main.inventory.MapVotingInventory;
-import main.inventory.Shop;
-import main.kits.KitChooser;
+import main.layouts.MapVotingInventory;
 import main.player.PlayerEB;
 import main.stages.StageLobbyLaunching;
 import main.stages.StageLobbyWaiting;
-import main.weapons.WeaponChooser;
 
 public class PlayerInteractListener implements Listener {
 
@@ -50,31 +47,29 @@ public class PlayerInteractListener implements Listener {
 		Material material = is.getType();
 		
 		if(Game.getInstance().getStage() instanceof StageLobbyWaiting || Game.getInstance().getStage() instanceof StageLobbyLaunching) {
-			if(material.equals(Material.PAPER)) {
-				new KitChooser(playerEB);
-				e.setCancelled(true);
-			}else if(material.equals(Material.WATCH)) {
+			if(material.equals(Material.WATCH)) {
 				Game.getInstance().playerForceLeave(playerEB);
 				e.setCancelled(true);
 			}else if(material.equals(Material.WOOL)) {
 				new MapVotingInventory(playerEB);
 				e.setCancelled(true);
-			}else if(material.equals(Material.STICK)) {
-				new WeaponChooser(playerEB);
-				e.setCancelled(true);
 			}else if(material.equals(Material.CHEST)) {
-				new Shop(playerEB);
+				playerEB.getShop().openInventory();
 				e.setCancelled(true);
 			}
 			return;
 		}
 		
-		boolean canceled = playerEB.getWeapon().onInteract(e);
-		if(!canceled) {
-			return;
+		if(playerEB.getWeapon()!=null) {
+			boolean canceled = playerEB.getWeapon().onInteract(e);
+			if(!canceled) {
+				return;
+			}
 		}
 		
-		playerEB.getKit().onInteract(is);
+		if(playerEB.getKit()!=null) {
+			playerEB.getKit().onInteract(is);
+		}
 		
 		e.setCancelled(true);
 	}

@@ -2,10 +2,11 @@ package main.stages;
 
 import main.Game;
 import main.configuration.Configuration;
-import main.inventory.LobbyInventory;
+import main.layouts.LobbyInventory;
 import main.maps.GameLocation;
 import main.maps.LocationTeleport;
 import main.maps.MapChooser;
+import main.player.GameStage;
 import main.player.PlayerEB;
 
 public class StageLobbyLaunching extends Stage{
@@ -26,7 +27,7 @@ public class StageLobbyLaunching extends Stage{
 		
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
 			new LobbyInventory(playerEB);
-			playerEB.setInRunningGame(false);
+			playerEB.setGameStage(GameStage.LOBBY_LAUNCHING);
 			playerEB.getPlayer().setHealth(20);
 			new LocationTeleport(playerEB,Game.getInstance().getMap(),GameLocation.LOBBY);
 			playerEB.getStatusBoard().setup("Launching in:");
@@ -40,7 +41,7 @@ public class StageLobbyLaunching extends Stage{
 		}
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
 			int remainingTime = (getFinalTicks()-getTicks())/20;
-			playerEB.getStatusBoard().setData(remainingTime);
+			playerEB.getStatusBoard().tick(remainingTime);
 		}
 		if(getTicks()==getFinalTicks()) {
 			Game.getInstance().setStage(new StageGameRunning());

@@ -15,7 +15,9 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import main.Game;
 import main.Main;
+import main.MsgCenter;
 import main.player.PlayerEB;
+import net.md_5.bungee.api.ChatColor;
 
 public class BombAssault {
 
@@ -26,7 +28,7 @@ public class BombAssault {
 	private final int activationTicks = 100;  
 	private final int bombardmentTicks = 150;
 	private Location locForBombs;
-	private int radius = 6;
+	private int radius = 10;
 	private boolean inProcess = false;
 	private PlayerEB playerEB;
 	private final int itemCooldownTicks = 1200;
@@ -86,7 +88,8 @@ public class BombAssault {
 			}else if(bombTicks==activationTicks) {
 				Location checkArea = decoy.getLocation().clone();
 				for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
-					playerEB.getPlayer().sendMessage("Upozornenie! Zacalo sa bombardovanie v oblasti: x"+(int)checkArea.getX()+" z"+(int)checkArea.getZ());
+					playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+MsgCenter.ALLERT+ChatColor.RED+"Upozornenie!"+ChatColor.GRAY+" Bombardovanie v oblasti: "
+							+ "x"+ChatColor.YELLOW+(int)checkArea.getX()+ChatColor.GRAY+" z"+ChatColor.YELLOW+(int)checkArea.getZ()+MsgCenter.ALLERT);
 				}
 				Block b = checkArea.getBlock();
 				int cycle = 0;
