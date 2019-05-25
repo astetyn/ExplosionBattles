@@ -16,9 +16,9 @@ public class KitsManager {
 	
 	public KitsManager() {
 		kitsData.add(new BasicData());
+		kitsData.add(new CamperData());
 		kitsData.add(new ArchitectData());
 		kitsData.add(new EngineerData());
-		kitsData.add(new CamperData());
 	}
 	
 	public List<KitData> getKitsData() {

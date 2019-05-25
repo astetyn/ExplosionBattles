@@ -15,7 +15,7 @@ public class PlayerLeaveListener implements Listener {
 		if(!Game.getInstance().isPlayerInGame(p)) {
 			return;
 		}
-		Game.getInstance().playerForceLeave(Game.getInstance().getPlayer(p));
+		Game.getInstance().getStage().onLeave(Game.getInstance().getPlayer(p));
 	}
 	
 }

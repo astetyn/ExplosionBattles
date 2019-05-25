@@ -4,22 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import main.configuration.Configuration;
-import main.gameobjects.airdrop.AirDrop;
-import main.layouts.LobbyInventory;
-import main.layouts.SpectatorInventory;
 import main.maps.GameLocation;
 import main.maps.LocationTeleport;
-import main.maps.MapChooser;
+import main.maps.voting.MapsManager;
 import main.maps.world.WorldsEB;
 import main.player.GameStage;
 import main.player.PlayerEB;
+import main.player.layouts.SpectatorInventoryLayout;
 import main.stages.Stage;
 import main.stages.StageEnding;
-import main.stages.StageLobbyLaunching;
 import main.stages.StageLobbyWaiting;
 
 public class Game {
@@ -28,94 +24,16 @@ public class Game {
 	private String map;
 	private Stage stage;
 	private Clock clock = new Clock(this);
-	private MapChooser mapChooser;
-	private AirDrop airDrop;
+	private MapsManager mapsManager;
 	private WorldsEB worldsEB;
-	private Configuration configuration;
-	private int playersInGame = 0;
-	private boolean gameRunning = false;
+	private Configuration configuration = new Configuration(Main.getPlugin());
+	private int playersInRunningGame = 0;
 	private List<PlayerEB> players = new ArrayList<PlayerEB>();
 	private PlayerEB lastShootPlayerEB;
 	private int playersOnStart = 0;
 	
-	public void playerJoin(Player p) {
-		if(stage==null) {
-			stage = new StageLobbyWaiting();
-		}
-		PlayerEB playerEB = new PlayerEB(p);
-		players.add(playerEB);
-		playerPreJoin(playerEB);
-		playerPostJoin(playerEB);
-	}
-	
-	private void playerPreJoin(PlayerEB playerEB) {
-		if(clock.isStopped()) {
-			clock = new Clock(this);
-		}
-		if(configuration.getConfig().getInt("game.max-players")==players.size()) {
-			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+"Je tu plno. Počkaj kým sa niekto odpojí..");
-			return;
-		}
-		String warning = "";
-		warning += ChatColor.DARK_GRAY+""+ChatColor.BOLD+"["+ChatColor.DARK_RED+ChatColor.BOLD+"WARNING!"+ChatColor.DARK_GRAY+ChatColor.BOLD+"]\n";
-		warning +=ChatColor.RED+"Táto minihra je vo vývoji. Ak natrafíš na bug alebo sa chceš podeliť o návrh na zlepšenie,"
-				+ " napíš nám cez "+ChatColor.BOLD+"/eb report"+ChatColor.RED+" <sprava>\n";
-		warning += ChatColor.DARK_GRAY+""+ChatColor.BOLD+"["+ChatColor.DARK_RED+ChatColor.BOLD+"WARNING!"+ChatColor.DARK_GRAY+ChatColor.BOLD+"]";
-		playerEB.getPlayer().sendMessage(warning);
-		
-		if(isGameRunning()) {
-			playerEB.getStatusBoard().setup("Wait for end game.");
-			new LocationTeleport(playerEB,getMap(),GameLocation.SPECTATOR);
-		}else if(stage instanceof StageLobbyLaunching) {
-			playerEB.getStatusBoard().setup("Launching in:");
-			new LocationTeleport(playerEB,getMap(),GameLocation.LOBBY);
-		}else {
-			playerEB.getStatusBoard().setup("Waiting for players...");
-			playerEB.getStatusBoard().tick(-1);
-			new LocationTeleport(playerEB,getMap(),GameLocation.LOBBY);
-		}
-		if(stage instanceof StageLobbyLaunching||stage instanceof StageLobbyWaiting) {
-			new LobbyInventory(playerEB);
-		}else {
-			new SpectatorInventory(playerEB);
-		}
-	}
-	
-	private void playerPostJoin(PlayerEB playerEB) {
-		if(players.size()==2) {
-			stage.end();
-			stage = new StageLobbyLaunching();
-		}
-		playerEB.getPlayer().setGameMode(GameMode.SURVIVAL);
-		playerEB.getPlayer().setFoodLevel(20);
-		playerEB.getPlayer().setHealth(20);
-		for(PlayerEB p : players) {
-			p.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+playerEB.getPlayer().getName()+ChatColor.GRAY+" sa pripojil/a do hry.");
-		}
-	}
-	
-	public void playerForceLeave(PlayerEB playerEB) {
-		if(playerEB.getGameStage()==GameStage.GAME_RUNNING) {
-			playersInGame--;
-		}
-		
-		players.remove(playerEB);
-		
-		if(players.size()<=1) {
-			stage.end();
-			stage = null;
-			stage = new StageLobbyWaiting();
-			clock.stop();
-		}
-		playerPostLeave(playerEB);
-	}
-	
-	private void playerPostLeave(PlayerEB playerEB) {
-		playerEB.getStatusBoard().clean();
-		playerEB.getPlayerDataSaver().restoreAll();
-		for(PlayerEB p : players) {
-			p.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+playerEB.getPlayer().getName()+ChatColor.GRAY+" opustil/a hru.");
-		}
+	public void postInit() {
+		stage = new StageLobbyWaiting(this);
 	}
 	
 	public boolean isPlayerInGame(Player p) {
@@ -143,8 +61,8 @@ public class Game {
 		}
 		playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+"Vybuchol si.");
 		new LocationTeleport(playerEB,Game.getInstance().getMap(),GameLocation.SPECTATOR);
-		new SpectatorInventory(playerEB);
-		playersInGame--;
+		playerEB.setInventoryLayout(new SpectatorInventoryLayout(playerEB));
+		playersInRunningGame--;
 		checkPlayersSituation();
 	}
 	
@@ -157,14 +75,14 @@ public class Game {
 		playerEB2.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+"Zabil si hráča "+ChatColor.DARK_GRAY+playerEB.getPlayer().getName());
 		playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+"Bol si zabitý hráčom "+ChatColor.DARK_GRAY+playerEB2.getPlayer().getName());
 		new LocationTeleport(playerEB,Game.getInstance().getMap(),GameLocation.SPECTATOR);
-		new SpectatorInventory(playerEB);
+		playerEB.setInventoryLayout(new SpectatorInventoryLayout(playerEB));
 		playerEB2.getUserAccount().addCoinsWithNotification(5);
-		playersInGame--;
+		playersInRunningGame--;
 		checkPlayersSituation();
 	}
 	
-	private void checkPlayersSituation() {
-		if(playersInGame<=1) {
+	public void checkPlayersSituation() {
+		if(playersInRunningGame<=1) {
 			String winnerName = null;
 			for(PlayerEB pEB : players) {
 				if(pEB.getGameStage()==GameStage.GAME_RUNNING) {
@@ -180,7 +98,7 @@ public class Game {
 				pEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GOLD+winnerName + ChatColor.GREEN+ " vyhral hru a nenechal sa odpáliť!");
 			}
 			stage.end();
-			stage = new StageEnding();
+			stage = new StageEnding(game);
 		}
 	}
 	
@@ -212,28 +130,20 @@ public class Game {
 		this.worldsEB = worldEB;
 	}
 
-	public int getPlayersInGame() {
-		return playersInGame;
+	public int getPlayersInRunningGame() {
+		return playersInRunningGame;
 	}
 
-	public void setPlayersInGame(int playersInGame) {
-		this.playersInGame = playersInGame;
+	public void setPlayersInRunningGame(int playersInGame) {
+		this.playersInRunningGame = playersInGame;
 	}
 
-	public MapChooser getMapChooser() {
-		return mapChooser;
+	public MapsManager getMapsManager() {
+		return mapsManager;
 	}
 	
-	public void setMapChooser(MapChooser mapChooser) {
-		this.mapChooser = mapChooser;
-	}
-
-	public AirDrop getAirDrop() {
-		return airDrop;
-	}
-
-	public void setAirDrop(AirDrop airDrop) {
-		this.airDrop = airDrop;
+	public void setMapsManager(MapsManager mapsManager) {
+		this.mapsManager = mapsManager;
 	}
 
 	public Stage getStage() {
@@ -258,14 +168,6 @@ public class Game {
 
 	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;
-	}
-
-	public boolean isGameRunning() {
-		return gameRunning;
-	}
-
-	public void setGameRunning(boolean gameRunning) {
-		this.gameRunning = gameRunning;
 	}
 
 	public PlayerEB getLastShootPlayerEB() {

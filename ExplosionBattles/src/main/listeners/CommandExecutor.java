@@ -109,14 +109,14 @@ public class CommandExecutor {
 				p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Už si pripojený/á v hre.");
 				return true;
 			}
-			Game.getInstance().playerJoin(p);
+			Game.getInstance().getStage().onJoin(p);
 			return true;
 		}else if(command.equals("leave")) {
 			if(!Game.getInstance().isPlayerInGame(p)) {
 				p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Nenachádzaš sa v hre.");
 				return true;
 			}
-			Game.getInstance().playerForceLeave(playerEB);
+			Game.getInstance().getStage().onLeave(playerEB);
 			p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Odpojil/a si sa z hry.");
 			return true;
 		}else if(command.equals("top")) {
@@ -191,7 +191,7 @@ public class CommandExecutor {
 			
 			if(!configExists) {
 				if(command.equals("create")) {
-					wc.createConfig();
+					wc.reloadConfig();
 					p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Mapa úspešne vytvorená.");
 					return true;
 				}
@@ -258,6 +258,24 @@ public class CommandExecutor {
 				}
 			}
 			return true;
+		}else if(argsSize==3) {
+			String command = args[0];
+			String mapName = args[1];
+			String builder = args[2];
+			
+			MapConfiguration wc = new MapConfiguration(mapName);
+			boolean configExists = wc.configExists();
+			if(!configExists) {
+				if(command.equals("create")) {
+					wc.reloadConfig();
+					wc.getConfig().set("builder", builder);
+					wc.saveConfig();
+					p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Mapa úspešne vytvorená.");
+					return true;
+				}
+			}else {
+				p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Takáto mapa už existuje.");
+			}
 		}
 		return false;
 	}

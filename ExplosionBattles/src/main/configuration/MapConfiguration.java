@@ -15,13 +15,17 @@ public class MapConfiguration {
 	private FileConfiguration config;
 	private String fileName;
 	private File file;
-	private final int MAX_PLAYERS = Game.getInstance().getConfiguration().getConfig().getInt("game.max-players");
+	private int MAX_PLAYERS;
 	private File mapFolder = new File(Main.getPlugin().getDataFolder()+"/maps");
 	
 	public MapConfiguration(String mapName) {
 		this.fileName = mapName+".yml";
 		this.file = new File(mapFolder, fileName);
 		this.config = YamlConfiguration.loadConfiguration(file);
+		if(configExists()) {
+			reloadConfig();
+		}
+		MAX_PLAYERS = Game.getInstance().getConfiguration().getConfig().getInt("game.max-players");
 	}
 	
 	public void saveConfig() {
@@ -32,10 +36,11 @@ public class MapConfiguration {
 	    }
 	}
 	
-	public void createConfig() {
+	public void reloadConfig() {
 		config.addDefault("spawn-locs", 0);
 		config.addDefault("night", false);
 		config.addDefault("rain", false);
+		config.addDefault("builder", "unknown");
 		config.options().copyDefaults(true);
 		saveConfig();
 	}

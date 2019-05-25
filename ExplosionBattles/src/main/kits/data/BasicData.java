@@ -16,6 +16,7 @@ public class BasicData extends KitData {
 	private final int price = 0;
 	private final boolean avaibleForVip = true;
 	private final String index = "kit_basic";
+	private final boolean limited = false;
 	
 	@Override
 	public ItemStack getItem() {
@@ -56,6 +57,11 @@ public class BasicData extends KitData {
 	@Override
 	public WeaponData getWeaponData() {
 		return weaponData;
+	}
+	
+	@Override
+	public boolean isLimited() {
+		return limited;
 	}
 
 }

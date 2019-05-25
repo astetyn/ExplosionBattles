@@ -78,7 +78,7 @@ public class BombAssault {
 				Location locFirework = decoy.getLocation().clone();
 				locFirework.add(0,1,0);
 				Firework fw = locFirework.getWorld().spawn(locFirework, Firework.class);
-				FireworkEffect effect = FireworkEffect.builder().flicker(true).trail(true).withColor(Color.WHITE).with(FireworkEffect.Type.BALL).build();
+				FireworkEffect effect = FireworkEffect.builder().flicker(true).withColor(Color.WHITE).with(FireworkEffect.Type.BALL).build();
 			    FireworkMeta fwm = fw.getFireworkMeta();
 			    fwm.clearEffects();
 			    fwm.addEffect(effect);

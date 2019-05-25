@@ -2,6 +2,7 @@ package main.player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class UserAccount {
 		this.config = YamlConfiguration.loadConfiguration(accountFile);
 		config.addDefault("coins", 0);
 		config.addDefault("epoints", 0);
-		config.addDefault("items", Arrays.asList("kit_basic","weapon_assaultshooter"));
+		config.addDefault("items", new ArrayList<String>(Arrays.asList("kit_basic","weapon_assaultshooter")));
 		config.options().copyDefaults(true);
 		saveConfig();
 	}

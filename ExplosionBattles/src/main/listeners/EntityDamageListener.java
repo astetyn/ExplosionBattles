@@ -4,21 +4,17 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
 import main.Game;
-import main.Main;
 import main.MsgCenter;
 import main.player.GameStage;
 import main.player.PlayerEB;
@@ -95,6 +91,10 @@ public class EntityDamageListener implements Listener {
 		if(playerEB==null) {
 			return;
 		}
+		if(playerEB.getGameStage()!=GameStage.GAME_RUNNING) {
+			e.setCancelled(true);
+			return;
+		}
 		
 		double damage = e.getDamage();
 		damage/=4;
@@ -116,34 +116,8 @@ public class EntityDamageListener implements Listener {
 			}
 			mv = damager.getMetadata("tnt").get(0);
 		}
-		
+
 		if(mv==null) {
-			
-			if(damager.getType()==EntityType.FIREBALL) {
-				if(!damager.hasMetadata("fireball")) {
-					e.setCancelled(true);
-					return;
-				}
-				Location loc = victim.getLocation();
-				Entity tnt = loc.getWorld().spawn(loc,TNTPrimed.class);
-				MetadataValue mvv = damager.getMetadata("fireball").get(0);
-				String playerName = mvv.asString();
-				tnt.setMetadata("tnt", new FixedMetadataValue(Main.getPlugin(), playerName));
-				((TNTPrimed)tnt).setYield(10);
-				((TNTPrimed)tnt).setFuseTicks(0);
-			}else if(damager.getType()==EntityType.SMALL_FIREBALL) {
-				if(!damager.hasMetadata("smallfireball")) {
-					e.setCancelled(true);
-					return;
-				}
-				Location loc = victim.getLocation();
-				Entity tnt = loc.getWorld().spawn(loc,TNTPrimed.class);
-				MetadataValue mvv = damager.getMetadata("smallfireball").get(0);
-				String playerName = mvv.asString();
-				tnt.setMetadata("tnt", new FixedMetadataValue(Main.getPlugin(), playerName));
-				((TNTPrimed)tnt).setFuseTicks(0);
-			}
-			
 			e.setCancelled(true);
 			return;
 		}

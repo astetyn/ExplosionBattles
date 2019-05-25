@@ -26,7 +26,7 @@ public class BlockExplodeListener implements Listener {
 				((TNTPrimed)tnt).setFuseTicks(0);
 			}
 			
-			if(b.hasMetadata("airdrop")) {
+			if(b.hasMetadata("supply")) {
 				e.blockList().remove(b);
 				continue;
 			}

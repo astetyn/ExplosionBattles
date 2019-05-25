@@ -14,14 +14,15 @@ public class MiniGunData extends WeaponData {
 	private final double defaultCooldown = 0.4;
 	private final int power = 12;
 	private final String accuracy = "Medium";
-	private final int price = 0;
+	private final int price = 3000;
 	private final boolean avaibleForVip = true;
 	private final String index = "weapon_minigun";
 	private final String manualMsg = "Drž pravé tlačítko myši a mier pod hráča.";
+	private final boolean limited = false;
 	
 	@Override
 	public ItemStack getItem() {
-		ItemStack is = new ItemStack(Material.WOOD_SWORD,1);
+		ItemStack is = new ItemStack(Material.IRON_AXE,1);
 		ItemMeta im = is.getItemMeta();
 		ArrayList<String> l = new ArrayList<String>();
 		
@@ -36,10 +37,10 @@ public class MiniGunData extends WeaponData {
 		l.add(ChatColor.WHITE+"Sila: "+ ChatColor.GOLD + power);
 		l.add(ChatColor.WHITE+"Presnosť: "+ ChatColor.GOLD + accuracy);
 		l.add(ChatColor.DARK_RED+""+ChatColor.ITALIC+"✪  Auto-Fire ✪");
+		im.setLore(l);
 		im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		im.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
 		im.setUnbreakable(true);
-		im.setLore(l);
 		im.setDisplayName(ChatColor.YELLOW+"Mini Gun");
 		is.setItemMeta(im);
 		return is;
@@ -78,6 +79,11 @@ public class MiniGunData extends WeaponData {
 	@Override
 	public double getDefaultCooldown() {
 		return defaultCooldown;
+	}
+	
+	@Override
+	public boolean isLimited() {
+		return limited;
 	}
 
 }

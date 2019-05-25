@@ -8,6 +8,7 @@ import main.weapons.data.AssaultShooterData;
 import main.weapons.data.HeavyExplosiveSniperData;
 import main.weapons.data.LightSniperData;
 import main.weapons.data.MiniGunData;
+import main.weapons.data.SnapdragonGunData;
 import main.weapons.data.WeaponData;
 
 public class WeaponsManager {
@@ -16,9 +17,10 @@ public class WeaponsManager {
 	
 	public WeaponsManager() {
 		weaponsData.add(new AssaultShooterData());
-		weaponsData.add(new LightSniperData());
 		weaponsData.add(new MiniGunData());
+		weaponsData.add(new LightSniperData());
 		weaponsData.add(new HeavyExplosiveSniperData());
+		weaponsData.add(new SnapdragonGunData());
 	}
 
 	public List<WeaponData> getWeaponsData() {
@@ -32,6 +34,8 @@ public class WeaponsManager {
 			return new LightSniper(playerEB);
 		}else if(weaponData instanceof MiniGunData) {
 			return new MiniGun(playerEB);
+		}else if(weaponData instanceof SnapdragonGunData) {
+			return new SnapdragonGun(playerEB);
 		}
 		return null;
 	}

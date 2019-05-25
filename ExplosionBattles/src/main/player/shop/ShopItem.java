@@ -11,5 +11,7 @@ public interface ShopItem {
 	public int getPrice();
 
 	public boolean isAvaibleForVip();
+	
+	public boolean isLimited();
 
 }

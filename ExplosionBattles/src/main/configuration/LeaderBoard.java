@@ -19,16 +19,16 @@ public class LeaderBoard {
 	
 	public void showLeaderBoard(Player p) {
 		String text = "";
-		text+=ChatColor.GOLD+"--- TOP "+ChatColor.BLUE+ChatColor.BOLD+"EP"+ChatColor.GOLD+" ---\n";
+		text+=ChatColor.YELLOW+""+ChatColor.BOLD+"--- Division 1 ---\n";
 		int i = 0;
 		for(MemberInLeaderBoard milb : getSortedList()) {
-			text+=ChatColor.YELLOW+milb.getName()+" > "+ChatColor.WHITE+milb.getPoints()+ChatColor.BLUE+" EP \n";
+			text+=ChatColor.GOLD+milb.getName()+" > "+ChatColor.WHITE+milb.getPoints()+ChatColor.BLUE+" EP \n";
 			i++;
 			if(i==10) {
 				break;
 			}
 		}
-		text+=ChatColor.GOLD+"--- TOP "+ChatColor.BLUE+ChatColor.BOLD+"EP"+ChatColor.GOLD+" ---\n";
+		text+=ChatColor.YELLOW+""+ChatColor.BOLD+"--- Division 1 ---\n";
 		p.sendMessage(text);
 	}
 	

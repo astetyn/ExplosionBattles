@@ -11,11 +11,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import main.Main;
-import main.MsgCenter;
 import main.player.PlayerEB;
 import main.weapons.data.AssaultShooterData;
 import main.weapons.data.WeaponData;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class AssaultShooter extends Weapon {
 	
@@ -46,7 +47,8 @@ public class AssaultShooter extends Weapon {
 		    BigDecimal bd = new BigDecimal(Double.toString(waitSeconds));
 		    bd = bd.setScale(1, RoundingMode.CEILING);
 		    waitSeconds = bd.doubleValue();
-			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Nabíjanie ešte "+ChatColor.YELLOW+ChatColor.BOLD+waitSeconds+ChatColor.GRAY+" sec...");
+		    String message = ChatColor.GRAY+"Nabíjanie ešte "+ChatColor.YELLOW+ChatColor.BOLD+waitSeconds+ChatColor.GRAY+" sec...";
+			playerEB.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
 			return;
 		}
 		fireTNT(playerEB);

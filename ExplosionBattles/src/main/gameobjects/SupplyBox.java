@@ -1,4 +1,4 @@
-package main.gameobjects.airdrop;
+package main.gameobjects;
 
 import java.util.Random;
 
@@ -13,10 +13,9 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import main.Main;
 
-public class DropBox {
+public class SupplyBox {
 
-	private boolean boxExists = false;
-	
+	private boolean boxFalling = false;
 	private Location loc;
 	private Location oldLoc;
 	private Material fallingBox = Material.REDSTONE_BLOCK;
@@ -24,8 +23,8 @@ public class DropBox {
 	private int tickCounter = 0;
 	private String[] bonuses;
 	
-	public DropBox(Location loc, String[] bonuses) {
-		this.boxExists = true;
+	public SupplyBox(Location loc, String[] bonuses) {
+		this.boxFalling = true;
 		this.loc = loc;
 		this.bonuses = bonuses;
 	}
@@ -36,12 +35,16 @@ public class DropBox {
 		
 		Block b = loc.getWorld().getBlockAt(loc);
 		if(b.getType()!=Material.AIR) {
+			if(oldLoc==null) {
+				oldLoc = loc;
+			}
 			Block bb = oldLoc.getWorld().getBlockAt(oldLoc);
 			bb.setType(box);
 			Random rand = new Random();
 			int index = rand.nextInt(bonuses.length);
-			bb.setMetadata("airdrop", new FixedMetadataValue(Main.getPlugin(), bonuses[index]));
-			this.boxExists = false;
+			bb.setMetadata("supply", new FixedMetadataValue(Main.getPlugin(), bonuses[index]));
+			loc = oldLoc;
+			this.boxFalling = false;
 			return;
 		}
 		b.setType(fallingBox);
@@ -62,12 +65,12 @@ public class DropBox {
 		oldLoc = loc.clone();
 	}
 
-	public boolean isBoxExists() {
-		return boxExists;
+	public Location getBoxLocation() {
+		return loc;
 	}
-
-	public void setBoxExists(boolean boxExists) {
-		this.boxExists = boxExists;
+	
+	public boolean isBoxFalling() {
+		return boxFalling;
 	}
 
 	public Material getBox() {

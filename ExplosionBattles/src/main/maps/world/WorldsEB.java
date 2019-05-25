@@ -89,7 +89,6 @@ public class WorldsEB {
 			savedWorld.setKeepSpawnInMemory(false);
 		}
 		savedWorld = Bukkit.getServer().getWorld(FULL_WORLD_NAME_SAVED);
-		
 	}
 	
 	public void loadGameWorld() {	
@@ -104,7 +103,6 @@ public class WorldsEB {
 			world.setKeepSpawnInMemory(false);
 		}
 		world = Bukkit.getServer().getWorld(FULL_WORLD_NAME);
-		
 	}	
 	
 	public void unloadSavedWorld() {

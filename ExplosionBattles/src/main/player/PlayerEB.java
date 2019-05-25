@@ -4,6 +4,9 @@ import org.bukkit.entity.Player;
 
 import main.kits.Basic;
 import main.kits.Kit;
+import main.player.consumables.ConsumablesManager;
+import main.player.layouts.InventoryLayout;
+import main.player.layouts.LobbyInventoryLayout;
 import main.player.shop.Shop;
 import main.weapons.AssaultShooter;
 import main.weapons.Weapon;
@@ -13,15 +16,18 @@ public class PlayerEB {
 	private Player player;
 	private GameStage gameStage;
 	private Kit kit;
-	private StatusBoard statusBoard;
 	private Weapon weapon;
+	private StatusBoard statusBoard;
 	private UserAccount userAccount;
 	private Shop shop;
 	private PlayerDataSaver playerDataSaver;
+	private InventoryLayout inventoryLayout;
+	private ConsumablesManager consumablesManager;
 	private boolean vip;
 	
 	public PlayerEB(Player player) {
 		this.player = player;
+		this.consumablesManager = new ConsumablesManager(this);
 		this.gameStage = GameStage.LOBBY_WAITING;
 		this.kit = new Basic(this);
 		this.weapon = new AssaultShooter(this);
@@ -29,6 +35,7 @@ public class PlayerEB {
 		this.userAccount = new UserAccount(this);
 		this.shop = new Shop(this);
 		this.playerDataSaver = new PlayerDataSaver(this);
+		this.inventoryLayout = new LobbyInventoryLayout(this);
 		this.vip = player.hasPermission("explosionbattles.vip");
 	}
 
@@ -82,6 +89,18 @@ public class PlayerEB {
 
 	public Shop getShop() {
 		return shop;
+	}
+
+	public InventoryLayout getInventoryLayout() {
+		return inventoryLayout;
+	}
+
+	public void setInventoryLayout(InventoryLayout inventoryLayout) {
+		this.inventoryLayout = inventoryLayout;
+	}
+
+	public ConsumablesManager getConsumablesManager() {
+		return consumablesManager;
 	}
 	
 }

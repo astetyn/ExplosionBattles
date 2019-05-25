@@ -8,8 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import main.Game;
-import main.layouts.MapVotingInventory;
-import main.maps.MapVoteItem;
+import main.player.GameStage;
 import main.player.PlayerEB;
 import main.player.shop.Shop;
 import main.player.shop.ShopItem;
@@ -26,6 +25,11 @@ public class PlayerInventoryListener implements Listener {
 		
 		PlayerEB playerEB = Game.getInstance().getPlayer(p);
 		
+		if(playerEB.getGameStage()!=GameStage.LOBBY_LAUNCHING&&playerEB.getGameStage()!=GameStage.LOBBY_WAITING) {
+			e.setCancelled(true);
+			return;
+		}
+		
 		ItemStack is = e.getCurrentItem();
 		
 		if(is==null) {
@@ -35,14 +39,13 @@ public class PlayerInventoryListener implements Listener {
 		}
 
 		Shop shop = playerEB.getShop();
-		if(is.getItemMeta()!=null) {
-			if(is.getItemMeta().getLore()!=null) {
-				if(is.getItemMeta().getLore().size()>0) {
-					String hidden = is.getItemMeta().getLore().get(0).replaceAll(String.valueOf(ChatColor.COLOR_CHAR), "");
-					for(ShopItem shopItem : shop.getShopItemsAll()) {
-						if(hidden.equals(shopItem.getIndex())) {
-							shop.onClick(shopItem);
-						}
+		if(is.getItemMeta().getLore()!=null) {
+			if(is.getItemMeta().getLore().size()>0) {
+				String hidden = is.getItemMeta().getLore().get(0).replaceAll(String.valueOf(ChatColor.COLOR_CHAR), "");
+				for(ShopItem shopItem : shop.getShopItemsAll()) {
+					if(hidden.equals(shopItem.getIndex())) {
+						shop.onClick(shopItem);
+						break;
 					}
 				}
 			}
@@ -53,16 +56,13 @@ public class PlayerInventoryListener implements Listener {
 			for(int i = 0; i < chooseItems.length;i++) {
 				if(is.equals(chooseItems[i])) {
 					shop.continueWithBuy(i);
+					break;
 				}
 			}
 		}
 		
-		for(MapVoteItem mvi : MapVotingInventory.getMapItems()) {
-			if(is.equals(mvi.getIs())){
-				Game.getInstance().getMapChooser().playerVoting(Game.getInstance().getPlayer(p),mvi.getIndex());
-				break;
-			}
-		}
+		Game.getInstance().getMapsManager().onClick(playerEB, is);
+		
 		e.setCancelled(true);
 	}
 }

@@ -3,6 +3,7 @@ package main.weapons.data;
 import java.util.ArrayList;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -17,10 +18,11 @@ public class AssaultShooterData extends WeaponData {
 	private final boolean avaibleForVip = true;
 	private final String index= "weapon_assaultshooter";
 	private final String manualMsg = "Namier do vzduchu a klikni myšou.";
+	private final boolean limited = false;
 
 	@Override
 	public ItemStack getItem() {
-		ItemStack is = new ItemStack(Material.STICK,1);
+		ItemStack is = new ItemStack(Material.STONE_AXE,1);
 		ItemMeta im = is.getItemMeta();
 		ArrayList<String> l = new ArrayList<String>();
 		
@@ -35,6 +37,9 @@ public class AssaultShooterData extends WeaponData {
 		l.add(ChatColor.WHITE+"Sila: "+ ChatColor.GOLD + power);
 		l.add(ChatColor.WHITE+"Presnosť: "+ ChatColor.GOLD + accuracy);
 		im.setLore(l);
+		im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		im.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+		im.setUnbreakable(true);
 		im.setDisplayName(ChatColor.GRAY+"Assault Shooter");
 		is.setItemMeta(im);
 		return is;
@@ -73,6 +78,11 @@ public class AssaultShooterData extends WeaponData {
 	@Override
 	public double getDefaultCooldown() {
 		return defaultCooldown;
+	}
+
+	@Override
+	public boolean isLimited() {
+		return limited;
 	}
 
 }

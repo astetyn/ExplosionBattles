@@ -31,7 +31,7 @@ public class EntityExplodeListener implements Listener {
 				((TNTPrimed)tnt).setFuseTicks(0);
 			}
 			
-			if(b.hasMetadata("airdrop")) {
+			if(b.hasMetadata("supply")) {
 				e.blockList().remove(b);
 				continue;
 			}
@@ -44,15 +44,25 @@ public class EntityExplodeListener implements Listener {
 			}
 			
 			Location loc = e.getLocation();
-			
-			if(e.getEntity().hasMetadata("fireball")) {
-				Entity tnt = loc.getWorld().spawn(loc,TNTPrimed.class);
-				MetadataValue mv = e.getEntity().getMetadata("fireball").get(0);
-				String playerName = mv.asString();
-				tnt.setMetadata("tnt", new FixedMetadataValue(Main.getPlugin(), playerName));
-				((TNTPrimed)tnt).setYield(10);
-				((TNTPrimed)tnt).setFuseTicks(0);
+			Entity tnt = loc.getWorld().spawn(loc,TNTPrimed.class);
+			MetadataValue mv = e.getEntity().getMetadata("fireball").get(0);
+			String playerName = mv.asString();
+			tnt.setMetadata("tnt", new FixedMetadataValue(Main.getPlugin(), playerName));
+			((TNTPrimed)tnt).setYield(10);
+			((TNTPrimed)tnt).setFuseTicks(0);
+			e.setCancelled(true);
+		}else if(e.getEntityType()==EntityType.WITHER_SKULL) {
+			if(!e.getEntity().hasMetadata("snapdragon")) {
+				return;
 			}
+			
+			Location loc = e.getLocation();
+			Entity tnt = loc.getWorld().spawn(loc,TNTPrimed.class);
+			MetadataValue mv = e.getEntity().getMetadata("snapdragon").get(0);
+			String playerName = mv.asString();
+			tnt.setMetadata("tnt", new FixedMetadataValue(Main.getPlugin(), playerName));
+			((TNTPrimed)tnt).setFuseTicks(0);
+			e.setCancelled(true);
 		}
 	}
 }

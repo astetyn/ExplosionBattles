@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import main.configuration.Configuration;
 import main.listeners.BlockExplodeListener;
 import main.listeners.BlockIgniteListener;
 import main.listeners.CommandExecutor;
@@ -23,6 +22,7 @@ import main.listeners.PlayerInventoryListener;
 import main.listeners.PlayerItemListener;
 import main.listeners.PlayerLeaveListener;
 import main.listeners.PlayerSwapHandItemsListener;
+import main.listeners.ProjectileHitListener;
 import main.listeners.WeatherListener;
 import main.maps.world.WorldsEB;
 import main.player.PlayerEB;
@@ -34,7 +34,6 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
-		Game.getInstance().setConfiguration(new Configuration(this));
 		PluginManager pluginManager = Bukkit.getServer().getPluginManager();
 		pluginManager.registerEvents(new PlayerInteractListener(),this);
 		pluginManager.registerEvents(new PlayerBlockListener(),this);
@@ -52,12 +51,15 @@ public class Main extends JavaPlugin {
 		pluginManager.registerEvents(new BlockExplodeListener(),this);
 		pluginManager.registerEvents(new BlockIgniteListener(),this);
 		pluginManager.registerEvents(new EntityRegainHealthListener(),this);
+		pluginManager.registerEvents(new ProjectileHitListener(), this);
 		
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "explosionbattles");
 		
 		WorldsEB worldsEB = new WorldsEB();
 		worldsEB.loadSavedWorld();
 		worldsEB.loadGameWorld();
+		
+		Game.getInstance().postInit();
 	}
 	
 	@Override

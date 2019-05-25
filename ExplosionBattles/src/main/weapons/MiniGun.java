@@ -40,7 +40,7 @@ public class MiniGun extends Weapon {
 	@Override
 	public void tick() {
 		if(ticks%(getCooldown()*20)==0&&ticks!=0) {
-			if(getPlayerEB().getPlayer().isBlocking()) {
+			if(getPlayerEB().getPlayer().isBlocking()&&(getPlayerEB().getPlayer().getInventory().getItemInMainHand().equals(getWeaponData().getItem()))) {
 				Location loc1 = getPlayerEB().getPlayer().getTargetBlock(null, 100).getLocation().add(1,0,0);
 				Location loc2 = getPlayerEB().getPlayer().getTargetBlock(null, 100).getLocation().add(0,1,0);
 				Location loc3 = getPlayerEB().getPlayer().getTargetBlock(null, 100).getLocation().add(0,0,1);

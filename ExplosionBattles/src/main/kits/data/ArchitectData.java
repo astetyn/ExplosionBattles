@@ -13,9 +13,10 @@ import net.md_5.bungee.api.ChatColor;
 public class ArchitectData extends KitData {
 
 	private WeaponData weaponData = new MiniGunData();
-	private final int price = 0;
+	private final int price = 8000;
 	private final boolean avaibleForVip = true;
 	private final String index = "kit_architect";
+	private final boolean limited = false;
 	
 	@Override
 	public ItemStack getItem() {
@@ -57,6 +58,11 @@ public class ArchitectData extends KitData {
 	@Override
 	public WeaponData getWeaponData() {
 		return weaponData;
+	}
+	
+	@Override
+	public boolean isLimited() {
+		return limited;
 	}
 	
 }

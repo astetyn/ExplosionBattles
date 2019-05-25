@@ -2,18 +2,20 @@ package main.stages;
 
 import main.Game;
 import main.configuration.Configuration;
-import main.layouts.LobbyInventory;
 import main.maps.GameLocation;
 import main.maps.LocationTeleport;
-import main.maps.MapChooser;
 import main.player.GameStage;
 import main.player.PlayerEB;
+import main.player.layouts.LobbyInventoryLayout;
 
 public class StageLobbyLaunching extends Stage{
 
 	private int finalTicks;
-	public StageLobbyLaunching() {
-		Configuration c = Game.getInstance().getConfiguration();
+	private Game game;
+	
+	public StageLobbyLaunching(Game game) {
+		this.game = game;
+		Configuration c = game.getConfiguration();
 		int seconds = c.getConfig().getInt("game.seconds-lobby");
 		finalTicks = seconds*20;
 		setFinalTicks(finalTicks);
@@ -22,14 +24,14 @@ public class StageLobbyLaunching extends Stage{
 	
 	@Override
 	public void start() {
-		Game.getInstance().setMapChooser(new MapChooser());
-		Game.getInstance().getMapChooser().notifyAllPlayers();
+		game.getMapsManager().reloadMaps();
+		game.getMapsManager().notifyAllPlayers();
 		
-		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
-			new LobbyInventory(playerEB);
+		for(PlayerEB playerEB : game.getPlayers()) {
+			playerEB.setInventoryLayout(new LobbyInventoryLayout(playerEB));
 			playerEB.setGameStage(GameStage.LOBBY_LAUNCHING);
 			playerEB.getPlayer().setHealth(20);
-			new LocationTeleport(playerEB,Game.getInstance().getMap(),GameLocation.LOBBY);
+			new LocationTeleport(playerEB,game.getMap(),GameLocation.LOBBY);
 			playerEB.getStatusBoard().setup("Launching in:");
 		}
 	}
@@ -39,12 +41,12 @@ public class StageLobbyLaunching extends Stage{
 		if(getTicks()%20!=0) {
 			return;
 		}
-		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+		for(PlayerEB playerEB : game.getPlayers()) {
 			int remainingTime = (getFinalTicks()-getTicks())/20;
 			playerEB.getStatusBoard().tick(remainingTime);
 		}
 		if(getTicks()==getFinalTicks()) {
-			Game.getInstance().setStage(new StageGameRunning());
+			game.setStage(new StageGameRunning(game));
 		}
 	}
 	
@@ -53,4 +55,15 @@ public class StageLobbyLaunching extends Stage{
 		
 	}
 
+	@Override
+	public void onPostJoin(PlayerEB playerEB) {
+		playerEB.getStatusBoard().setup("Launching in:");
+		new LocationTeleport(playerEB,game.getMap(),GameLocation.LOBBY);
+		playerEB.setInventoryLayout(new LobbyInventoryLayout(playerEB));
+	}
+
+	@Override
+	public void onPostLeave(PlayerEB playerEB) {
+
+	}
 }
