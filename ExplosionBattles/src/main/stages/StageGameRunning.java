@@ -154,8 +154,10 @@ public class StageGameRunning extends Stage {
 
 	@Override
 	public void onPostLeave(PlayerEB playerEB) {
-		int pirg = game.getPlayersInRunningGame();
-		game.setPlayersInRunningGame(pirg-1);
-		game.checkPlayersSituation();
+		if(playerEB.getGameStage()==GameStage.GAME_RUNNING) {
+			int pirg = game.getPlayersInRunningGame();
+			game.setPlayersInRunningGame(pirg-1);
+			game.checkPlayersSituation();
+		}
 	}
 }
