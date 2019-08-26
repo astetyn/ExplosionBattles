@@ -87,7 +87,7 @@ public class BombAssault {
 			    fw.detonate();
 			}else if(bombTicks==activationTicks) {
 				Location checkArea = decoy.getLocation().clone();
-				for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+				for(PlayerEB playerEB : Game.getInstance().getPlayersInGame()) {
 					playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+MsgCenter.ALLERT+ChatColor.RED+"Upozornenie!"+ChatColor.GRAY+" Bombardovanie v oblasti: "
 							+ "x"+ChatColor.YELLOW+(int)checkArea.getX()+ChatColor.GRAY+" z"+ChatColor.YELLOW+(int)checkArea.getZ()+MsgCenter.ALLERT);
 				}

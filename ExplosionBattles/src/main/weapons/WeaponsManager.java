@@ -4,37 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.player.PlayerEB;
-import main.weapons.data.AssaultShooterData;
-import main.weapons.data.HeavyExplosiveSniperData;
-import main.weapons.data.LightSniperData;
-import main.weapons.data.MiniGunData;
-import main.weapons.data.SnapdragonGunData;
-import main.weapons.data.WeaponData;
 
 public class WeaponsManager {
 	
-	private List<WeaponData> weaponsData = new ArrayList<WeaponData>();
+	private List<Weapon> weapons= new ArrayList<Weapon>();
 	
 	public WeaponsManager() {
-		weaponsData.add(new AssaultShooterData());
-		weaponsData.add(new MiniGunData());
-		weaponsData.add(new LightSniperData());
-		weaponsData.add(new HeavyExplosiveSniperData());
-		weaponsData.add(new SnapdragonGunData());
+		weapons.add(new AssaultShooter());
+		weapons.add(new MiniGun());
+		weapons.add(new LightSniper());
+		weapons.add(new SnapdragonGun());
+		weapons.add(new HeavyExplosiveSniper());
 	}
 
-	public List<WeaponData> getWeaponsData() {
-		return weaponsData;
+	public List<Weapon> getWeapons() {
+		return weapons;
 	}
 	
-	public Weapon createNewWeapon(WeaponData weaponData, PlayerEB playerEB) {
-		if(weaponData instanceof AssaultShooterData) {
+	/**	Use when you want to create new weapon based on the previous weapon.
+	 * Method will check type of the previous gun and create the new with the same type.
+	 * 
+	 * @param weapon can be created without player
+	 * @param playerEB will be hooked to the gun
+	 * @return New weapon with player with completely new data.
+	 */
+	public static Weapon createWeapon(Weapon weapon, PlayerEB playerEB) {
+		if(weapon instanceof AssaultShooter) {
 			return new AssaultShooter(playerEB);
-		}else if(weaponData instanceof LightSniperData) {
+		}else if(weapon instanceof LightSniper) {
 			return new LightSniper(playerEB);
-		}else if(weaponData instanceof MiniGunData) {
+		}else if(weapon instanceof MiniGun) {
 			return new MiniGun(playerEB);
-		}else if(weaponData instanceof SnapdragonGunData) {
+		}else if(weapon instanceof SnapdragonGun) {
 			return new SnapdragonGun(playerEB);
 		}
 		return null;

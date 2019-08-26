@@ -49,7 +49,7 @@ public class MapCreator {
 
 		int counter = 1;
 		
-		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+		for(PlayerEB playerEB : Game.getInstance().getPlayersInGame()) {
 			Location loc = (Location) wc.getConfig().get("loc"+counter);
 			playerEB.getPlayer().teleport(loc);
 			counter++;

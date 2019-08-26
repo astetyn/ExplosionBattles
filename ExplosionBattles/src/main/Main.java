@@ -64,7 +64,7 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+		for(PlayerEB playerEB : Game.getInstance().getPlayersInGame()) {
 			playerEB.getStatusBoard().clean();
 			playerEB.getPlayerDataSaver().restoreAll();
 		}

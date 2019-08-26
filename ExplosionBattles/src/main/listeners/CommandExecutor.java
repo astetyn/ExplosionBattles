@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 import main.Game;
 import main.Main;
 import main.MsgCenter;
-import main.configuration.Configuration;
+import main.configuration.ConfigurationEB;
 import main.configuration.LeaderBoard;
 import main.configuration.MapConfiguration;
 import main.maps.MapPlayerChecker;
@@ -166,7 +166,7 @@ public class CommandExecutor {
 				p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Svet možno uložený.");
 				return true;
 			}else if(command.equals("reload")) {
-				Game.getInstance().setConfiguration(new Configuration(Main.getPlugin()));
+				Game.getInstance().setConfiguration(new ConfigurationEB(Main.getPlugin()));
 				p.sendMessage("EB config reloaded.");
 				return true;
 			}

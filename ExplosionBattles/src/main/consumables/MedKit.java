@@ -1,4 +1,4 @@
-package main.player.consumables;
+package main.consumables;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,6 @@ public class MedKit implements Consumable {
 
 	private final String index = "consumable_medkit";
 	private final int price = 50;
-	private final boolean limited = false;
 	private PlayerEB playerEB;
 	
 	public MedKit(PlayerEB playerEB) {
@@ -60,16 +59,6 @@ public class MedKit implements Consumable {
 	@Override
 	public int getPrice() {
 		return price;
-	}
-
-	@Override
-	public boolean isAvaibleForVip() {
-		return false;
-	}
-
-	@Override
-	public boolean isLimited() {
-		return limited;
 	}
 
 }

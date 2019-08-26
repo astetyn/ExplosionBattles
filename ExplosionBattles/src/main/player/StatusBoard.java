@@ -8,9 +8,10 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import main.Game;
+import main.gameobjects.SecondTickable;
 import net.md_5.bungee.api.ChatColor;
 
-public class StatusBoard {
+public class StatusBoard implements SecondTickable {
 
 	private ScoreboardManager sm = Bukkit.getScoreboardManager();
 	private Scoreboard board;
@@ -28,6 +29,7 @@ public class StatusBoard {
 	private String pointsName = ChatColor.BLUE+""+ChatColor.BOLD+"EP: "+ChatColor.RESET;
 	private PlayerEB playerEB;
 	private final String objName = "eb";
+	private int passedSeconds = 0;
 	
 	public StatusBoard(PlayerEB playerEB) {
 		this.playerEB = playerEB;
@@ -49,19 +51,19 @@ public class StatusBoard {
 		playerEB.getPlayer().setScoreboard(sm.getNewScoreboard());
 	}
 	
-	public void tick(int remainingTime) {
+	public void setTime(int scoreTime) {
 		resetScores();
 		emptyLine=objective.getScore(ChatColor.RED+"");
 		emptyLine.setScore(7);
-		if(remainingTime==-1) {
+		if(scoreTime==-1) {
 			time=objective.getScore(timeName);
 		}else {
-			time=objective.getScore(timeName+remainingTime);
+			time=objective.getScore(timeName+scoreTime);
 		}
 		time.setScore(6);
 		emptyLine2=objective.getScore(ChatColor.BLUE+"");
 		emptyLine2.setScore(5);
-		players=objective.getScore(playersName+Game.getInstance().getPlayers().size());
+		players=objective.getScore(playersName+Game.getInstance().getPlayersInGame().size());
 		players.setScore(4);
 		emptyLine3=objective.getScore("");
 		emptyLine3.setScore(3);
@@ -69,6 +71,12 @@ public class StatusBoard {
 		coins.setScore(2);
 		points=objective.getScore(pointsName+playerEB.getUserAccount().getEPoints());
 		points.setScore(1);
+	}
+	
+	@Override
+	public void onSecTick() {
+		int remainingTime = (Game.getInstance().getStage().getEndTick()/20)-passedSeconds;
+		setTime(remainingTime);
 	}
 	
 	private void resetScores() {
@@ -83,6 +91,11 @@ public class StatusBoard {
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		objective.setDisplayName(ChatColor.DARK_GRAY+""+ChatColor.BOLD+"["+ChatColor.GOLD+ChatColor.BOLD+"Explosion Battles"+ChatColor.DARK_GRAY+ChatColor.BOLD+"]");
 		playerEB.getPlayer().setScoreboard(board);
+	}
+
+	@Override
+	public boolean isAlive() {
+		return true;
 	}
 
 }

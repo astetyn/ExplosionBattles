@@ -1,7 +1,6 @@
 package main.stages;
 
 import main.Game;
-import main.configuration.Configuration;
 import main.maps.GameLocation;
 import main.maps.LocationTeleport;
 import main.player.GameStage;
@@ -10,35 +9,30 @@ import main.player.layouts.SpectatorInventoryLayout;
 
 public class StageEnding extends Stage {
 
-	private int finalTicks;
 	private Game game;
 	
 	public StageEnding(Game game) {
+		super("game.seconds-ending");
 		this.game = game;
-		Configuration c = game.getConfiguration();
-		int seconds = c.getConfig().getInt("game.seconds-ending");
-		finalTicks = seconds*20;
-		setFinalTicks(finalTicks);
 		start();
 	}
 	
 	public void start() {
-		for(PlayerEB playerEB : game.getPlayers()) {
-			playerEB.setGameStage(GameStage.GAME_ENDING);
-			playerEB.getPlayer().setHealth(20);
-			playerEB.getStatusBoard().setup("Ending phase...");
+		for(PlayerEB playerEB : game.getPlayersInGame()) {
+			readyPlayer(playerEB);
 		}
 	}
 	
-	public void tick() {
+	public void onTick() {
 		if(getTicks()%20!=0) {
 			return;
 		}
-		for(PlayerEB playerEB : game.getPlayers()) {
-			int remainingTime = (getFinalTicks()-getTicks())/20;
-			playerEB.getStatusBoard().tick(remainingTime);
+		for(PlayerEB playerEB : game.getPlayersInGame()) {
+			int remainingTime = (getEndTick()-getTicks())/20;
+			playerEB.getStatusBoard().setTime(remainingTime);
 		}
-		if(getTicks()==getFinalTicks()) {
+		if(getTicks()==getEndTick()) {
+			end();
 			game.setStage(new StageLobbyLaunching(game));
 		}
 	}
@@ -50,14 +44,20 @@ public class StageEnding extends Stage {
 
 	@Override
 	public void onPostJoin(PlayerEB playerEB) {
-		playerEB.getStatusBoard().setup("Wait for end game.");
 		new LocationTeleport(playerEB,game.getMap(),GameLocation.SPECTATOR);
-		playerEB.setInventoryLayout(new SpectatorInventoryLayout(playerEB));
+		readyPlayer(playerEB);
 	}
 
 	@Override
 	public void onPostLeave(PlayerEB playerEB) {
 		
 	}
-
+	
+	@Override
+	public void readyPlayer(PlayerEB playerEB) {
+		playerEB.setGameStage(GameStage.GAME_ENDING);
+		playerEB.setInventoryLayout(new SpectatorInventoryLayout(playerEB));
+		playerEB.getStatusBoard().setup("Ending phase...");
+		super.readyPlayer(playerEB);
+	}
 }

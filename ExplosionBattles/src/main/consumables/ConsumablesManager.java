@@ -1,4 +1,4 @@
-package main.player.consumables;
+package main.consumables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.List;
 import org.bukkit.inventory.ItemStack;
 
 import main.player.PlayerEB;
-import main.player.shop.ShopItem;
+import main.player.shop.Buyable;
 
 public class ConsumablesManager {
 
@@ -20,6 +20,7 @@ public class ConsumablesManager {
 		this.playerEB = playerEB;
 		consumablesList.add(new MedKit(playerEB));
 		consumablesList.add(new Smoke(playerEB));
+		consumablesList.add(new Grenade(playerEB));
 	}
 	
 	public void onInteract(ItemStack is) {
@@ -41,7 +42,7 @@ public class ConsumablesManager {
 		boughtConsumables.clear();
 	}
 
-	public void addBoughtItem(ShopItem shopItem, int amount) {
+	public void addBoughtItem(Buyable shopItem, int amount) {
 		if(boughtConsumables.containsKey(shopItem)) {
 			int actual = boughtConsumables.get(shopItem);
 			boughtConsumables.put((Consumable) shopItem, actual+amount);
@@ -50,7 +51,7 @@ public class ConsumablesManager {
 		}
 	}
 	
-	public boolean hasMaxItems(ShopItem shopItem) {
+	public boolean hasMaxItems(Buyable shopItem) {
 		if(boughtConsumables.containsKey(shopItem)) {
 			if(boughtConsumables.get(shopItem)>=maxBought) {
 				return true;
@@ -59,7 +60,7 @@ public class ConsumablesManager {
 		return false;
 	}
 	
-	public int getBought(ShopItem shopItem) {
+	public int getBought(Buyable shopItem) {
 		if(boughtConsumables.containsKey(shopItem)) {
 			return boughtConsumables.get(shopItem);
 		}

@@ -2,26 +2,63 @@ package main.weapons;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
+import main.gameobjects.Tickable;
 import main.player.PlayerEB;
-import main.weapons.data.WeaponData;
+import main.player.shop.Buyable;
 
-public abstract class Weapon {
+public abstract class Weapon implements Tickable, Buyable {
 
-	private double cooldown = -1;
+	private double cooldown;
 	private long lastUse = 0;
 	private PlayerEB playerEB;
+	private double power;
+	private String accuracy;
+	private String manual;
 	
-	public abstract WeaponData getWeaponData();
+	private final int DEFAULT_INV_SLOT = 0;
 	
-	public boolean onInteract(PlayerInteractEvent event) {
-		return true;
+	/** Create basic object for use without player. */
+	public Weapon(double cooldown, double power, String accuracy, String manual) {
+		this.cooldown = cooldown;
+		this.power = power;
+		this.accuracy = accuracy;
+		this.manual = manual;
 	}
-
+	
+	/** Create basic object for player use. */
+	public Weapon(PlayerEB playerEB, double cooldown, double power, String accuracy, String manual) {
+		this.playerEB = playerEB;
+		this.cooldown = cooldown;
+		this.power = power;
+		this.accuracy = accuracy;
+		this.manual = manual;
+	}
+	
+	public Weapon(Weapon weapon, PlayerEB playerEB) {
+		this.playerEB = playerEB;
+		this.cooldown = weapon.cooldown;
+		this.power = weapon.power;
+		this.accuracy = weapon.accuracy;
+		this.manual = weapon.manual;
+	}
+	
+	/** This method is called when player interacts in game with gun.
+	 *  
+	 * @return true, if event should be canceled
+	 */
+	public abstract boolean onInteract(PlayerInteractEvent event);
+	
+	/** This method give the player weapon item and show manual to the player.*/
+	public void equip() {
+		this.playerEB.getPlayer().getInventory().setItem(this.DEFAULT_INV_SLOT, getItem()); 
+		this.playerEB.getPlayer().sendTitle(ChatColor.BLUE+""+ChatColor.BOLD+"Ovládanie zbrane", ChatColor.AQUA+""+ChatColor.ITALIC+this.manual,20,40,40);
+	}
+	
+	public abstract ItemStack getItem();
+	
 	public double getCooldown() {
-		if(cooldown == -1) {
-			cooldown = getWeaponData().getDefaultCooldown();
-		}
 		return cooldown;
 	}
 	
@@ -29,30 +66,39 @@ public abstract class Weapon {
 		this.cooldown = cooldown;
 	}
 	
-	public void equip() {
-		if(getWeaponData().getItem()==null) {
-			return;
-		}
-		playerEB.getPlayer().getInventory().setItem(0, getWeaponData().getItem()); 
-		cooldown = getWeaponData().getDefaultCooldown();
-		getPlayerEB().getPlayer().sendTitle(ChatColor.BLUE+""+ChatColor.BOLD+"Ovládanie zbrane", ChatColor.AQUA+""+ChatColor.ITALIC+getWeaponData().getManualMsg(),20,40,40);
-	}
-
-	public PlayerEB getPlayerEB() {
-		return playerEB;
-	}
-
-	public void setPlayerEB(PlayerEB playerEB) {
-		this.playerEB = playerEB;
-	}
-	
-	public void tick() {};	
-	
 	public long getLastUse() {
 		return lastUse;
 	}
 
 	public void setLastUse(long lastUse) {
 		this.lastUse = lastUse;
+	}
+
+	public double getPower() {
+		return power;
+	}
+
+	public void setPower(double power) {
+		this.power = power;
+	}
+
+	public String getAccuracy() {
+		return accuracy;
+	}
+
+	public void setAccuracy(String accuracy) {
+		this.accuracy = accuracy;
+	}
+
+	public String getManual() {
+		return manual;
+	}
+
+	public void setManual(String manual) {
+		this.manual = manual;
+	}
+
+	public PlayerEB getPlayerEB() {
+		return playerEB;
 	}
 }

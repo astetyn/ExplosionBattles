@@ -5,12 +5,12 @@ import java.io.File;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Configuration {
+public class ConfigurationEB {
 
 	private JavaPlugin plugin;
 	private FileConfiguration config;
 	
-	public Configuration(JavaPlugin plugin) {
+	public ConfigurationEB(JavaPlugin plugin) {
 		this.plugin = plugin;
 		loadFolders();
 		loadConfiguration();

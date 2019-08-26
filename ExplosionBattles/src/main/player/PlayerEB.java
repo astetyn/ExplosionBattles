@@ -2,9 +2,9 @@ package main.player;
 
 import org.bukkit.entity.Player;
 
-import main.kits.Basic;
+import main.consumables.ConsumablesManager;
+import main.kits.BasicKit;
 import main.kits.Kit;
-import main.player.consumables.ConsumablesManager;
 import main.player.layouts.InventoryLayout;
 import main.player.layouts.LobbyInventoryLayout;
 import main.player.shop.Shop;
@@ -17,6 +17,7 @@ public class PlayerEB {
 	private GameStage gameStage;
 	private Kit kit;
 	private Weapon weapon;
+	private boolean chosenWeapon;
 	private StatusBoard statusBoard;
 	private UserAccount userAccount;
 	private Shop shop;
@@ -29,8 +30,9 @@ public class PlayerEB {
 		this.player = player;
 		this.consumablesManager = new ConsumablesManager(this);
 		this.gameStage = GameStage.LOBBY_WAITING;
-		this.kit = new Basic(this);
+		this.kit = new BasicKit(this);
 		this.weapon = new AssaultShooter(this);
+		this.chosenWeapon = false;
 		this.statusBoard = new StatusBoard(this);
 		this.userAccount = new UserAccount(this);
 		this.shop = new Shop(this);
@@ -101,6 +103,14 @@ public class PlayerEB {
 
 	public ConsumablesManager getConsumablesManager() {
 		return consumablesManager;
+	}
+
+	public boolean isChosenWeapon() {
+		return chosenWeapon;
+	}
+
+	public void setChosenWeapon(boolean chosenWeapon) {
+		this.chosenWeapon = chosenWeapon;
 	}
 	
 }

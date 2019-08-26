@@ -2,7 +2,7 @@ package main.maps;
 
 import main.Game;
 import main.MsgCenter;
-import main.configuration.Configuration;
+import main.configuration.ConfigurationEB;
 import main.configuration.MapConfiguration;
 import main.player.PlayerEB;
 import net.md_5.bungee.api.ChatColor;
@@ -20,7 +20,7 @@ public class MapSystemChecker {
 		if(b) {
 			return true;
 		}else {
-			for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+			for(PlayerEB playerEB : Game.getInstance().getPlayersInGame()) {
 				playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Mapa je poškodená alebo neexistuje, načitavanie zlyhalo, kontaktuj vedenie.");
 			}
 			return false;
@@ -34,7 +34,7 @@ public class MapSystemChecker {
 		if(!wc.configExists()) {
 			return false;
 		}
-		Configuration c = Game.getInstance().getConfiguration();
+		ConfigurationEB c = Game.getInstance().getConfiguration();
 		int maxSpawns = c.getConfig().getInt("game.max-players");
 
 		if(wc.getSpawns()!=maxSpawns) {

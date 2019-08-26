@@ -1,4 +1,4 @@
-package main.player.consumables;
+package main.consumables;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +16,15 @@ import org.bukkit.potion.PotionEffectType;
 
 import main.Game;
 import main.MsgCenter;
-import main.gameobjects.GameObject;
+import main.gameobjects.Tickable;
 import main.player.PlayerEB;
 import main.stages.Stage;
 import main.stages.StageGameRunning;
 
-public class Smoke extends GameObject implements Consumable {
+public class Smoke implements Tickable, Consumable {
 
 	private final String index = "consumable_smoke";
 	private final int price = 50;
-	private final boolean limited = false;
 	private PlayerEB playerEB;
 	private boolean active = false;
 	private int ticks = 0;
@@ -89,17 +88,7 @@ public class Smoke extends GameObject implements Consumable {
 	}
 
 	@Override
-	public boolean isAvaibleForVip() {
-		return false;
-	}
-
-	@Override
-	public boolean isLimited() {
-		return limited;
-	}
-
-	@Override
-	public void tick() {
+	public void onTick() {
 		ticks++;
 		if(ticks%10==0) {
 			List<SmokeData> copy = new ArrayList<SmokeData>(activeSmokes);
@@ -117,7 +106,7 @@ public class Smoke extends GameObject implements Consumable {
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean isAlive() {
 		return active;
 	}
 

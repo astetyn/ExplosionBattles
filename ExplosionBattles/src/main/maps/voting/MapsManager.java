@@ -37,7 +37,7 @@ public class MapsManager {
 	}
 	
 	public void notifyAllPlayers() {
-		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+		for(PlayerEB playerEB : Game.getInstance().getPlayersInGame()) {
 			String msg = "";
 			msg+=ChatColor.YELLOW+""+ChatColor.BOLD+"-- Mapy na výber --"+"\n";
 			for(MapVoteItem mvi : mapItems) {	

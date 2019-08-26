@@ -2,8 +2,6 @@ package main;
 
 import org.bukkit.Bukkit;
 
-import main.stages.StageLobbyWaiting;
-
 public class Clock implements Runnable{
 
 	private Game game;
@@ -20,12 +18,8 @@ public class Clock implements Runnable{
 		if(game.getStage()==null) {
 			return;
 		}
-		if(game.getStage() instanceof StageLobbyWaiting) {
-			return;
-		}
-		game.getStage().tick();
-		int stageTicks = game.getStage().getTicks();
-		game.getStage().setTicks(stageTicks+1);
+		game.getStage().onTick();
+		game.getStage().increaseTicks();
 	}
 
 	public void stop() {

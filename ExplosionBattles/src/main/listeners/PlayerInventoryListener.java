@@ -11,7 +11,7 @@ import main.Game;
 import main.player.GameStage;
 import main.player.PlayerEB;
 import main.player.shop.Shop;
-import main.player.shop.ShopItem;
+import main.player.shop.Buyable;
 import net.md_5.bungee.api.ChatColor;
 
 public class PlayerInventoryListener implements Listener {
@@ -42,7 +42,7 @@ public class PlayerInventoryListener implements Listener {
 		if(is.getItemMeta().getLore()!=null) {
 			if(is.getItemMeta().getLore().size()>0) {
 				String hidden = is.getItemMeta().getLore().get(0).replaceAll(String.valueOf(ChatColor.COLOR_CHAR), "");
-				for(ShopItem shopItem : shop.getShopItemsAll()) {
+				for(Buyable shopItem : shop.getShopItemsAll()) {
 					if(hidden.equals(shopItem.getIndex())) {
 						shop.onClick(shopItem);
 						break;

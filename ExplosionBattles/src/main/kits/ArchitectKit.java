@@ -15,20 +15,24 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Stairs;
 
 import main.MsgCenter;
-import main.kits.data.ArchitectData;
-import main.kits.data.KitData;
 import main.player.PlayerEB;
+import main.weapons.MiniGun;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
-public class Architect extends Kit {
+public class ArchitectKit extends Kit {
 	
 	private long lastBuild = 0;
 	private final double cooldownBuild = 0.5;
-	private final KitData kitData = new ArchitectData();
 	private List<ItemStack> tools = new ArrayList<ItemStack>();
 	
-	public Architect(PlayerEB playerEB) {
-		setPlayer(playerEB);
+	public ArchitectKit() {
+		super(new MiniGun());
+	}
+	
+	public ArchitectKit(PlayerEB playerEB) {
+		super(playerEB, new MiniGun());
 	}
 
 	@Override
@@ -65,7 +69,8 @@ public class Architect extends Kit {
 				double diff = actualTime - lastBuild;
 				double seconds = diff / 1000;
 				if(seconds<cooldownBuild) {
-					getPlayerEB().getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Staváš moc rýchlo!");
+					String message = MsgCenter.PREFIX+ChatColor.GRAY+"Staviaš veľmi rýchlo!";
+					getPlayerEB().getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
 					return;
 				}
 				lastBuild = System.currentTimeMillis();
@@ -89,11 +94,6 @@ public class Architect extends Kit {
 				}	
 			}
 		}
-	}
-	
-	@Override
-	public KitData getKitData() {
-		return kitData;
 	}
 	
 	public boolean wantsToBuildPlatform() {
@@ -527,5 +527,45 @@ public class Architect extends Kit {
 				return true;
 			}
 		}
+	}
+
+	@Override
+	public ItemStack getItem() {
+		ItemStack item = new ItemStack(Material.QUARTZ_STAIRS,1);
+		ItemMeta im = item.getItemMeta();
+		ArrayList<String> l = new ArrayList<String>();
+		
+		StringBuilder builder = new StringBuilder();
+		for(char c : getIndex().toCharArray()){
+		  builder.append(ChatColor.COLOR_CHAR).append(c);
+		}
+		String hidden = builder.toString();
+		l.add(hidden);
+		
+		l.add(ChatColor.GRAY+""+ChatColor.ITALIC+"Stavaj podľa seba!");
+		l.add(ChatColor.WHITE+"Obsahuje zbraň "+getWeapon().getItem().getItemMeta().getDisplayName());
+		l.add(ChatColor.AQUA+"Možnosť stavať schody, steny a plošiny.");
+		im.setLore(l);
+		im.setDisplayName(ChatColor.YELLOW+"Architect");
+		item.setItemMeta(im);
+		return item;
+	}
+
+	@Override
+	public String getIndex() {
+		return "kit_architect";
+	}
+
+	@Override
+	public int getPrice() {
+		return 1800;
+	}
+
+	@Override
+	public void onTick() {}
+
+	@Override
+	public boolean isAlive() {
+		return false;
 	}
 }

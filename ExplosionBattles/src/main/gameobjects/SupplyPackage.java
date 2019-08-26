@@ -6,6 +6,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.MetadataValue;
 
@@ -13,15 +18,14 @@ import main.Game;
 import main.Main;
 import main.MsgCenter;
 import main.configuration.MapConfiguration;
+import main.consumables.MedKit;
 import main.gameobjects.planes.SupplyPlane;
+import main.player.GameStage;
 import main.player.PlayerEB;
-import main.player.consumables.MedKit;
 import main.weapons.HeavyExplosiveSniper;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 
-public class SupplyPackage extends GameObject {
+public class SupplyPackage implements Tickable, Listener {
 
 	private SupplyPlane plane;
 	private SupplyBox supplyBox;
@@ -57,9 +61,9 @@ public class SupplyPackage extends GameObject {
 		}
 		int height = checkArea.getBlockY();
 		
-		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+		for(PlayerEB playerEB : Game.getInstance().getPlayersInGame()) {
 			String message = MsgCenter.ALLERT+ChatColor.WHITE+"Lietadlo prichádza, čoskoro zhodí balík! "+MsgCenter.ALLERT;
-			playerEB.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+			playerEB.getPlayer().sendMessage(message);
 		}
 		
 		Location startLoc = new Location(locationInArena.getWorld(), x1, height, z1);
@@ -73,7 +77,7 @@ public class SupplyPackage extends GameObject {
 		
 	}
 	
-	public void tick() {
+	public void onTick() {
 		
 		ticks++;
 		
@@ -100,8 +104,29 @@ public class SupplyPackage extends GameObject {
 		}
 	}
 	
-	@Override
-	public void onInteractBlock(PlayerEB playerEB, Block b) {
+	@EventHandler
+	public void onInteract(PlayerInteractEvent e) {
+		
+		Player p = e.getPlayer();
+		if(!Game.getInstance().isPlayerInGame(p)) {
+			return;
+		}
+		
+		PlayerEB playerEB = Game.getInstance().getPlayer(p);
+		
+		if(e.getAction()==null) {
+			return;
+		}
+		
+		if(e.getAction()!=Action.LEFT_CLICK_BLOCK&&e.getAction()!=Action.RIGHT_CLICK_BLOCK) {
+			return;
+		}
+		
+		if(playerEB.getGameStage()!=GameStage.GAME_RUNNING) {
+			return;
+		}
+		
+		Block b = e.getClickedBlock();
 		
 		if(!b.hasMetadata("supply")) {
 			return;
@@ -125,7 +150,7 @@ public class SupplyPackage extends GameObject {
 	    fwm.setPower(1);
 	    fw.setFireworkMeta(fwm);
 		
-	    for(PlayerEB pEB : Game.getInstance().getPlayers()) {
+	    for(PlayerEB pEB : Game.getInstance().getPlayersInGame()) {
 	    	pEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+playerEB.getPlayer().getName()+ChatColor.GRAY+" našiel SupplyPackage.");
 	    }
 	    
@@ -139,6 +164,7 @@ public class SupplyPackage extends GameObject {
 			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.YELLOW+"Rýchlosť nabíjania zdvojnásobená.");
 		}else if(bonus.equals("heavysniper")) {
 			playerEB.setWeapon(new HeavyExplosiveSniper(playerEB));
+			playerEB.setChosenWeapon(false);
 			playerEB.getWeapon().equip();
 			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.BLUE+ChatColor.ITALIC+"Našiel si silnú Heavy Sniper!");
 			playerEB.getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+ChatColor.BOLD+"Heavy Explosive Sniper"+ChatColor.YELLOW+" pridaná ako hlavná zbraň.");
@@ -153,7 +179,7 @@ public class SupplyPackage extends GameObject {
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean isAlive() {
 		return active;
 	}
 }

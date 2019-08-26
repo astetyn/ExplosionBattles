@@ -4,17 +4,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import main.Game;
-import main.gameobjects.GameObject;
-import main.player.GameStage;
 import main.player.PlayerEB;
-import main.stages.Stage;
-import main.stages.StageGameRunning;
 
 public class PlayerInteractListener implements Listener {
 
@@ -25,17 +20,6 @@ public class PlayerInteractListener implements Listener {
 			return;
 		}
 		PlayerEB playerEB = Game.getInstance().getPlayer(p);
-		
-		if(e.getAction()!=null) {
-			if(e.getAction()==Action.LEFT_CLICK_BLOCK||e.getAction()==Action.RIGHT_CLICK_BLOCK) {
-				if(playerEB.getGameStage()==GameStage.GAME_RUNNING) {
-					Stage stage = Game.getInstance().getStage();
-					for(GameObject go : ((StageGameRunning) stage).getActiveGameObjects()) {
-						go.onInteractBlock(playerEB, e.getClickedBlock());
-					}
-				}
-			}
-		}
 		
 		if(e.getHand()==null) {
 			return;

@@ -14,10 +14,8 @@ import main.configuration.MapConfiguration;
 import main.gameobjects.planes.NukePlane;
 import main.player.PlayerEB;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 
-public class NukeAssault extends GameObject {
+public class NukeAssault implements Tickable {
 
 	private boolean active = false;
 	private int ticks = 0;
@@ -61,9 +59,9 @@ public class NukeAssault extends GameObject {
 		}
 		int height = checkArea.getBlockY();
 		
-		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
+		for(PlayerEB playerEB : Game.getInstance().getPlayersInGame()) {
 			String message = MsgCenter.ALLERT+ChatColor.WHITE+"Pozor! Atomová bomba bude čoskoro zhodená! "+MsgCenter.ALLERT;
-			playerEB.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+			playerEB.getPlayer().sendMessage(message);
 		}
 		
 		Location startLoc = new Location(locationInArena.getWorld(), x1, height, z1);
@@ -80,7 +78,7 @@ public class NukeAssault extends GameObject {
 	}
 
 	@Override
-	public void tick() {
+	public void onTick() {
 		ticks++;
 		
 		if(ticks%20!=0) {
@@ -106,7 +104,7 @@ public class NukeAssault extends GameObject {
 	}
 	
 	@Override
-	public boolean isActive() {
+	public boolean isAlive() {
 		return active;
 	}
 

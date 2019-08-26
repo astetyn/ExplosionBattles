@@ -1,7 +1,7 @@
 package main.stages;
 
+import main.Clock;
 import main.Game;
-import main.configuration.Configuration;
 import main.maps.GameLocation;
 import main.maps.LocationTeleport;
 import main.player.GameStage;
@@ -10,15 +10,16 @@ import main.player.layouts.LobbyInventoryLayout;
 
 public class StageLobbyLaunching extends Stage{
 
-	private int finalTicks;
 	private Game game;
 	
 	public StageLobbyLaunching(Game game) {
+		super("game.seconds-lobby");
 		this.game = game;
-		Configuration c = game.getConfiguration();
-		int seconds = c.getConfig().getInt("game.seconds-lobby");
-		finalTicks = seconds*20;
-		setFinalTicks(finalTicks);
+		
+		if(game.getClock().isStopped()) {
+			game.setClock(new Clock(game));
+		}
+		
 		start();
 	}
 	
@@ -27,25 +28,22 @@ public class StageLobbyLaunching extends Stage{
 		game.getMapsManager().reloadMaps();
 		game.getMapsManager().notifyAllPlayers();
 		
-		for(PlayerEB playerEB : game.getPlayers()) {
-			playerEB.setInventoryLayout(new LobbyInventoryLayout(playerEB));
-			playerEB.setGameStage(GameStage.LOBBY_LAUNCHING);
-			playerEB.getPlayer().setHealth(20);
-			new LocationTeleport(playerEB,game.getMap(),GameLocation.LOBBY);
-			playerEB.getStatusBoard().setup("Launching in:");
+		for(PlayerEB playerEB : game.getPlayersInGame()) {
+			readyPlayer(playerEB);
 		}
 	}
 	
 	@Override
-	public void tick() {
+	public void onTick() {
 		if(getTicks()%20!=0) {
 			return;
 		}
-		for(PlayerEB playerEB : game.getPlayers()) {
-			int remainingTime = (getFinalTicks()-getTicks())/20;
-			playerEB.getStatusBoard().tick(remainingTime);
+		for(PlayerEB playerEB : game.getPlayersInGame()) {
+			int remainingTime = (getEndTick()-getTicks())/20;
+			playerEB.getStatusBoard().setTime(remainingTime);
 		}
-		if(getTicks()==getFinalTicks()) {
+		if(getTicks()==getEndTick()) {
+			end();
 			game.setStage(new StageGameRunning(game));
 		}
 	}
@@ -57,13 +55,20 @@ public class StageLobbyLaunching extends Stage{
 
 	@Override
 	public void onPostJoin(PlayerEB playerEB) {
-		playerEB.getStatusBoard().setup("Launching in:");
-		new LocationTeleport(playerEB,game.getMap(),GameLocation.LOBBY);
-		playerEB.setInventoryLayout(new LobbyInventoryLayout(playerEB));
+		readyPlayer(playerEB);
 	}
 
 	@Override
 	public void onPostLeave(PlayerEB playerEB) {
 
+	}
+	
+	@Override
+	public void readyPlayer(PlayerEB playerEB) {
+		playerEB.setGameStage(GameStage.LOBBY_LAUNCHING);
+		playerEB.setInventoryLayout(new LobbyInventoryLayout(playerEB));
+		new LocationTeleport(playerEB,game.getMap(),GameLocation.LOBBY);
+		playerEB.getStatusBoard().setup("Launching in:");
+		super.readyPlayer(playerEB);
 	}
 }

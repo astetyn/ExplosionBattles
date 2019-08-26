@@ -57,7 +57,7 @@ public class SupplyBox {
 				FireworkMeta fwm = fw.getFireworkMeta();
 			    FireworkEffect effect = FireworkEffect.builder().withColor(Color.RED).with(FireworkEffect.Type.BURST).trail(true).build();
 			    fwm.addEffect(effect);
-			    fwm.setPower(0);
+			    fwm.setPower(5);
 			    fw.setFireworkMeta(fwm);
 			    fw.detonate();
 			}

@@ -21,8 +21,9 @@ import org.bukkit.entity.Player;
 
 import main.Game;
 import main.Main;
+import main.gameobjects.SecondTickable;
 
-public class WorldsEB {
+public class WorldsEB implements SecondTickable {
 
 	private String WORLD_NAME;
 	private String WORLD_NAME_SAVED;
@@ -205,6 +206,20 @@ public class WorldsEB {
 	    } catch (IOException e) {
 	 
 	    }
+	}
+	
+	@Override
+	public void onSecTick() {	
+		if(isNight()) {
+			getGameWorld().setTime(18000);
+		}else {
+			getGameWorld().setTime(6000);
+		}
+	}
+
+	@Override
+	public boolean isAlive() {
+		return true;
 	}
 	
 	public World getGameWorld() {

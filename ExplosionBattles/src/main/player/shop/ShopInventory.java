@@ -10,22 +10,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import main.player.PlayerEB;
-import main.weapons.data.WeaponData;
+import main.weapons.Weapon;
 
 public class ShopInventory {
 
 	private Inventory inventory;
 	private PlayerEB playerEB;
-	private List<ShopItem> shopItemsWeapons;
-	private List<ShopItem> shopItemsKits;
-	private List<ShopItem> shopItemsConsumables;
-	private List<ShopItem> shopItemsLimited;
+	private List<Buyable> shopItemsWeapons;
+	private List<Buyable> shopItemsKits;
+	private List<Buyable> shopItemsConsumables;
 	
-	public ShopInventory(PlayerEB playerEB, List<ShopItem> shopItemsKits, List<ShopItem> shopItemsWeapons, List<ShopItem> shopItemsConsumables, List<ShopItem> shopItemsLimited) {
+	public ShopInventory(PlayerEB playerEB, List<Buyable> shopItemsKits, List<Buyable> shopItemsWeapons, List<Buyable> shopItemsConsumables) {
 		this.playerEB = playerEB;
 		this.shopItemsKits = shopItemsKits;
 		this.shopItemsWeapons = shopItemsWeapons;
-		this.shopItemsLimited = shopItemsLimited;
 		this.shopItemsConsumables = shopItemsConsumables;
 		inventory = Bukkit.createInventory(null, 54,ChatColor.BLUE+""+ChatColor.BOLD+"-= Armoury =-");
 		reloadItems();
@@ -46,34 +44,16 @@ public class ShopInventory {
 		}
 	}
 	
-	private void insertOneGlass(int slot, int color, String name) {
-		ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE,1, (short)color);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName(name);
-		is.setItemMeta(im);
-		inventory.setItem(slot, is);
-	}
-	
-	private void insertHalfGlass(int from, int color, String name) {
-		for(int j=from;j<from+4;j++) {
-			ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE,1, (short)color);
-			ItemMeta im = is.getItemMeta();
-			im.setDisplayName(name);
-			is.setItemMeta(im);
-			inventory.setItem(j, is);
-		}
-	}
-	
-	private void insertItems(int from, List<ShopItem> items) {
+	private void insertItems(int from, List<Buyable> items) {
 		int i = from;
-		for(ShopItem si : items) {
+		for(Buyable si : items) {
 
 			ItemStack is = si.getItem();
 			ItemMeta im = is.getItemMeta();
 			
 			String name = im.getDisplayName();
 			String newName = "";
-			if(si instanceof WeaponData) {
+			if(si instanceof Weapon) {
 				newName = ChatColor.GRAY+""+ChatColor.BOLD+"Zbraň "+ChatColor.RESET+name;
 			}else {
 				newName = ChatColor.GRAY+""+ChatColor.BOLD+"Kit "+ChatColor.RESET+name;
@@ -84,11 +64,6 @@ public class ShopInventory {
 			lore.add("");
 			if(si.getPrice()!=-1) {
 				lore.add(ChatColor.BLUE+"Cena: "+si.getPrice());
-				if(si.isAvaibleForVip()) {
-					lore.add(ChatColor.GRAY+"Zadarmo pre VIP: "+ChatColor.GREEN+"ÁNO");
-				}else {
-					lore.add(ChatColor.GRAY+"Zadarmo pre VIP: "+ChatColor.RED+"NIE");
-				}
 			}else {
 				lore.add(ChatColor.RED+"Nedostupné.");
 			}
@@ -103,9 +78,9 @@ public class ShopInventory {
 		}
 	}
 	
-	private void insertConsumables(int from, List<ShopItem> items) {
+	private void insertConsumables(int from, List<Buyable> items) {
 		int i = from;
-		for(ShopItem si : items) {
+		for(Buyable si : items) {
 
 			ItemStack is = si.getItem();
 			ItemMeta im = is.getItemMeta();
@@ -134,12 +109,8 @@ public class ShopInventory {
 		insertItems(9, shopItemsKits);
 		insertGlass(18,5,ChatColor.YELLOW+""+ChatColor.BOLD+"Zbrane");
 		insertItems(27, shopItemsWeapons);
-		insertHalfGlass(36,1,ChatColor.YELLOW+""+ChatColor.BOLD+"Limitovaná ponuka");
-		insertOneGlass(40,4,ChatColor.YELLOW+""+ChatColor.BOLD+"_");
-		insertHalfGlass(41,1,ChatColor.YELLOW+""+ChatColor.BOLD+"Jednorázové predmety");
-		insertItems(45, shopItemsLimited);
-		insertOneGlass(49,4,ChatColor.YELLOW+""+ChatColor.BOLD+"_");
-		insertConsumables(50, shopItemsConsumables);	
+		insertGlass(36,1,ChatColor.YELLOW+""+ChatColor.BOLD+"Jednorázové predmety");
+		insertConsumables(45, shopItemsConsumables);	
 	}
 
 }

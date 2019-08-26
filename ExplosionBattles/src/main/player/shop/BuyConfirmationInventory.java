@@ -13,9 +13,9 @@ public class BuyConfirmationInventory {
 
 	private ItemStack[] chooseItems = new ItemStack[2];
 	private Inventory inventory;
-	private ShopItem shopItem;
+	private Buyable shopItem;
 	
-	public BuyConfirmationInventory(PlayerEB playerEB, ShopItem shopItem) {
+	public BuyConfirmationInventory(PlayerEB playerEB, Buyable shopItem) {
 		this.shopItem = shopItem;
 		ItemStack air = new ItemStack(Material.AIR,1);
 		ItemStack agree = new ItemStack(Material.EMERALD_BLOCK,1);
@@ -39,7 +39,7 @@ public class BuyConfirmationInventory {
 		return chooseItems;
 	}
 	
-	public ShopItem getShopItem() {
+	public Buyable getShopItem() {
 		return shopItem;
 	}
 
