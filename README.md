@@ -1,11 +1,11 @@
 # ExplosionBattles
-ExplosionBattles is a small minigame. Fast. Funny. And EXPLOSIVE!
+ExplosionBattles is a small minigame based on BattleRoyale.
 
-Currently in development. First Alpha release planned for mid June.
+Currently in development. 
 
-Designed for bukkit 1.12/1.13.
-All versions will be able to use them on every spigot/bukkit server.
+Designed for spigot 1.12.2.
+All versions will be able to use them on every spigot server.
 Your suggestions for improvment of the minigame are welcome.
 If you want to help me, feel free to create pull request.
 
-#Developing for mc.worldoffreedom.eu
+Developing for mc.worldoffreedom.eu
