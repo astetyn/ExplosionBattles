@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -46,13 +45,6 @@ public class CommandExecutor {
 		if(cmd.getName().equalsIgnoreCase("explosionbattles")) {	
 			return executeCmd();
 		}else if(cmd.getName().equalsIgnoreCase("explosionbattlessetup")) {
-			if(args.length==1) {
-				if(args[0].equals("invitation")) {
-					sendToBungeeCord((Player) sender, "invitation");
-					sender.sendMessage("Žiadosť poslaná bungeecordu.");
-					return true;
-				}
-			}
 			return executeCmdSetup();
 		}
 		return true;
@@ -74,7 +66,6 @@ public class CommandExecutor {
 						reportMessage+=args[i]+" ";
 					}
 					
-					reportMessage = StringUtils.stripAccents(reportMessage);
 					if(!Main.getPlugin().getDataFolder().exists()) {
 						Main.getPlugin().getDataFolder().mkdirs();
 					}

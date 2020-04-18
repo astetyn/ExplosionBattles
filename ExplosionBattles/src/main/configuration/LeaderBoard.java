@@ -19,7 +19,7 @@ public class LeaderBoard {
 	
 	public void showLeaderBoard(Player p) {
 		String text = "";
-		text+=ChatColor.YELLOW+""+ChatColor.BOLD+"--- Division 1 ---\n";
+		text+=ChatColor.YELLOW+""+ChatColor.BOLD+"--- EB TOP ---\n";
 		int i = 0;
 		for(MemberInLeaderBoard milb : getSortedList()) {
 			text+=ChatColor.GOLD+milb.getName()+" > "+ChatColor.WHITE+milb.getPoints()+ChatColor.BLUE+" EP \n";
@@ -28,7 +28,7 @@ public class LeaderBoard {
 				break;
 			}
 		}
-		text+=ChatColor.YELLOW+""+ChatColor.BOLD+"--- Division 1 ---\n";
+		text+=ChatColor.YELLOW+""+ChatColor.BOLD+"--- EB TOP ---\n";
 		p.sendMessage(text);
 	}
 	

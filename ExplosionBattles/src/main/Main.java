@@ -53,8 +53,6 @@ public class Main extends JavaPlugin {
 		pluginManager.registerEvents(new EntityRegainHealthListener(),this);
 		pluginManager.registerEvents(new ProjectileHitListener(), this);
 		
-		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "explosionbattles");
-		
 		WorldsEB worldsEB = new WorldsEB();
 		worldsEB.loadSavedWorld();
 		worldsEB.loadGameWorld();
