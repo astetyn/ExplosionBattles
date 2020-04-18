@@ -24,6 +24,7 @@ import main.maps.MapPlayerChecker;
 import main.maps.world.WorldTeleport;
 import main.maps.world.WorldsEB;
 import main.player.PlayerEB;
+import main.utils.LocationS;
 import net.md_5.bungee.api.ChatColor;
 
 public class CommandExecutor {
@@ -132,7 +133,8 @@ public class CommandExecutor {
 				MapConfiguration wc = new MapConfiguration("lobby");
 				boolean configExists = wc.configExists();
 				
-				Location loc = p.getLocation();
+				Location l = p.getLocation();
+				LocationS loc = new LocationS(l.getWorld().getName(),l.getX(),l.getY(),l.getZ());
 				
 				p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Spawn lobby úspešne nastavený.");
 				
@@ -200,8 +202,9 @@ public class CommandExecutor {
 						p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"V tomto svete sa mapa nastaviť nedá! Prejdi do EB sveta cez /ebs world.");
 						return true;
 					}
-					Location loc = p.getLocation();
-					loc.setWorld(Bukkit.getWorld(new WorldsEB().getFullWorldName()));
+					Location l = p.getLocation();
+					l.setWorld(Bukkit.getWorld(new WorldsEB().getFullWorldName()));
+					LocationS loc = new LocationS(l.getWorld().getName(),l.getX(),l.getY(),l.getZ());
 					boolean b = wc.addspawn(loc);
 					if(b) {
 						p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Spawn úspešne nastavený.");
@@ -217,8 +220,9 @@ public class CommandExecutor {
 						p.sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Žiadny spawn sa už nedá vymazať.");
 					}
 				}else if(command.equals("spectator")) {
-					Location loc = p.getLocation();
-					loc.setWorld(Bukkit.getWorld(new WorldsEB().getFullWorldName()));
+					Location l = p.getLocation();
+					l.setWorld(Bukkit.getWorld(new WorldsEB().getFullWorldName()));
+					LocationS loc = new LocationS(l.getWorld().getName(),l.getX(),l.getY(),l.getZ());
 					wc.setSpawnSpecator(loc);
 					p.sendMessage(MsgCenter.PREFIX+ChatColor.GRAY+"Spawn na spectatora úspešne nastavený.");
 					return true;
@@ -270,22 +274,5 @@ public class CommandExecutor {
 		}
 		return false;
 	}
-	
-	private void sendToBungeeCord(Player p, String channel){
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-        try {
-            out.writeUTF(channel);
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        p.sendPluginMessage(Main.getPlugin(), "explosionbattles", b.toByteArray());
-        try {
-			b.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
 	
 }

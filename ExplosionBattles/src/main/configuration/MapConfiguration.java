@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import main.Game;
 import main.Main;
+import main.utils.LocationS;
 
 public class MapConfiguration {
 
@@ -49,7 +50,7 @@ public class MapConfiguration {
 		file.delete();
 	}
 	
-	public boolean addspawn(Location loc) {
+	public boolean addspawn(LocationS loc) {
 		int spawnPoints = getSpawns();
 		if(spawnPoints==MAX_PLAYERS) {
 			return false;
@@ -73,7 +74,7 @@ public class MapConfiguration {
 		return true;
 	}
 	
-	public void setSpawnSpecator(Location loc) {
+	public void setSpawnSpecator(LocationS loc) {
 		String key = "spec";
 		config.set(key,loc);
 		saveConfig();

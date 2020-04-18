@@ -1,10 +1,12 @@
 package main.maps;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import main.MsgCenter;
 import main.configuration.MapConfiguration;
 import main.player.PlayerEB;
+import main.utils.LocationS;
 import net.md_5.bungee.api.ChatColor;
 
 public class LocationTeleport {
@@ -31,13 +33,13 @@ public class LocationTeleport {
 				return;
 			}
 			MapConfiguration wc = new MapConfiguration("lobby");
-			Location loc = (Location) wc.getConfig().get("spawnlobby");
-			playerEB.getPlayer().teleport(loc);
+			LocationS loc = (LocationS) wc.getConfig().get("spawnlobby");
+			playerEB.getPlayer().teleport(new Location(Bukkit.getWorld(loc.getWorld()),loc.getX(),loc.getY(),loc.getZ()));
 		}
 		if(gameLoc == GameLocation.SPECTATOR) {
 			MapConfiguration wc = new MapConfiguration(map);
-			Location loc = (Location) wc.getConfig().get("spec");
-			playerEB.getPlayer().teleport(loc);
+			LocationS loc = (LocationS) wc.getConfig().get("spec");
+			playerEB.getPlayer().teleport(new Location(Bukkit.getWorld(loc.getWorld()),loc.getX(),loc.getY(),loc.getZ()));
 		}
 	}
 	

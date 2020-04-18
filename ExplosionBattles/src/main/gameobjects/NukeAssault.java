@@ -1,5 +1,6 @@
 package main.gameobjects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,6 +14,7 @@ import main.MsgCenter;
 import main.configuration.MapConfiguration;
 import main.gameobjects.planes.NukePlane;
 import main.player.PlayerEB;
+import main.utils.LocationS;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -39,8 +41,12 @@ public class NukeAssault extends GameObject {
 
 		String loc1 = "loc"+String.valueOf(locIndex);
 		String loc2 = "loc"+String.valueOf(locIndex+1);
-		Location locationInArena = (Location) wc.getConfig().get(loc1);
-		Location locationInArena2 = (Location) wc.getConfig().get(loc2);
+		LocationS lia = (LocationS) wc.getConfig().get(loc1);
+		LocationS lia2 = (LocationS) wc.getConfig().get(loc2);
+		
+		Location locationInArena = new Location(Bukkit.getWorld(lia.getWorld()),lia.getX(),lia.getY(),lia.getZ());
+		Location locationInArena2 = new Location(Bukkit.getWorld(lia2.getWorld()),lia2.getX(),lia2.getY(),lia2.getZ());
+		
 		
 		int x1 = locationInArena.getBlockX();
 		int x2 = locationInArena2.getBlockX();

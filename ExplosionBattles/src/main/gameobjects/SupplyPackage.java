@@ -1,5 +1,6 @@
 package main.gameobjects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -16,6 +17,7 @@ import main.configuration.MapConfiguration;
 import main.gameobjects.planes.SupplyPlane;
 import main.player.PlayerEB;
 import main.player.consumables.MedKit;
+import main.utils.LocationS;
 import main.weapons.HeavyExplosiveSniper;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -35,8 +37,11 @@ public class SupplyPackage extends GameObject {
 		
 		active = true;
 		MapConfiguration wc = new MapConfiguration(Game.getInstance().getMap());
-		Location locationInArena = (Location) wc.getConfig().get("loc1");
-		Location locationInArena2 = (Location) wc.getConfig().get("loc2");
+		LocationS lia = (LocationS) wc.getConfig().get("loc1");
+		LocationS lia2 = (LocationS) wc.getConfig().get("loc2");
+		
+		Location locationInArena = new Location(Bukkit.getWorld(lia.getWorld()),lia.getX(),lia.getY(),lia.getZ());
+		Location locationInArena2 = new Location(Bukkit.getWorld(lia2.getWorld()),lia2.getX(),lia2.getY(),lia2.getZ());
 		
 		int x1 = locationInArena.getBlockX();
 		int x2 = locationInArena2.getBlockX();

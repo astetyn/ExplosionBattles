@@ -1,11 +1,13 @@
 package main.maps;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import main.Game;
 import main.configuration.MapConfiguration;
 import main.maps.world.WorldsEB;
 import main.player.PlayerEB;
+import main.utils.LocationS;
 
 public class MapCreator {
 
@@ -50,8 +52,8 @@ public class MapCreator {
 		int counter = 1;
 		
 		for(PlayerEB playerEB : Game.getInstance().getPlayers()) {
-			Location loc = (Location) wc.getConfig().get("loc"+counter);
-			playerEB.getPlayer().teleport(loc);
+			LocationS loc = (LocationS) wc.getConfig().get("loc"+counter);
+			playerEB.getPlayer().teleport(new Location(Bukkit.getWorld(loc.getWorld()),loc.getX(),loc.getY(),loc.getZ()));
 			counter++;
 		}
 	}
