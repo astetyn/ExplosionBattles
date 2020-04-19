@@ -20,7 +20,7 @@ public class CamperData extends KitData {
 
 	@Override
 	public ItemStack getItem() {
-		ItemStack item = new ItemStack(Material.SAPLING,1);
+		ItemStack item = new ItemStack(Material.OAK_SAPLING,1);
 		ItemMeta im = item.getItemMeta();
 		ArrayList<String> l = new ArrayList<String>();
 		

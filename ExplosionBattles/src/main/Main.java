@@ -3,6 +3,7 @@ package main;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,8 +27,15 @@ import main.listeners.ProjectileHitListener;
 import main.listeners.WeatherListener;
 import main.maps.world.WorldsEB;
 import main.player.PlayerEB;
+import main.utils.LocationS;
 
 public class Main extends JavaPlugin {
+	
+	static {
+		
+		ConfigurationSerialization.registerClass(LocationS.class,"LocationS");
+		
+	}
 	
 	private static JavaPlugin plugin;
 	

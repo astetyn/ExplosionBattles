@@ -9,7 +9,7 @@ public class SupplyPlane extends Plane {
 	private static Material front = Material.GLASS;
 	private static Material light = Material.SEA_LANTERN;
 	private static Material hull = Material.COAL_BLOCK;
-	private static Material wing = Material.DOUBLE_STEP;
+	private static Material wing = Material.SMOOTH_STONE;
 	
 	private final static Material PLANE_CONSTRUCTION[][] = {
 	{air,air,air,air,front,air,air,air,air},

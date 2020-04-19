@@ -38,7 +38,7 @@ public class ShopInventory {
 	
 	private void insertGlass(int from, int color, String name) {
 		for(int j=from;j<from+9;j++) {
-			ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE,1, (short)color);
+			ItemStack is = new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE,1, (short)color);
 			ItemMeta im = is.getItemMeta();
 			im.setDisplayName(name);
 			is.setItemMeta(im);
@@ -47,7 +47,7 @@ public class ShopInventory {
 	}
 	
 	private void insertOneGlass(int slot, int color, String name) {
-		ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE,1, (short)color);
+		ItemStack is = new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE,1, (short)color);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(name);
 		is.setItemMeta(im);
@@ -56,7 +56,7 @@ public class ShopInventory {
 	
 	private void insertHalfGlass(int from, int color, String name) {
 		for(int j=from;j<from+4;j++) {
-			ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE,1, (short)color);
+			ItemStack is = new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE,1, (short)color);
 			ItemMeta im = is.getItemMeta();
 			im.setDisplayName(name);
 			is.setItemMeta(im);

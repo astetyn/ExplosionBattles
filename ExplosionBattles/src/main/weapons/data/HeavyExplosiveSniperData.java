@@ -22,7 +22,7 @@ public class HeavyExplosiveSniperData extends WeaponData {
 
 	@Override
 	public ItemStack getItem() {
-		ItemStack is = new ItemStack(Material.GOLD_AXE,1);
+		ItemStack is = new ItemStack(Material.GOLDEN_AXE,1);
 		ItemMeta im = is.getItemMeta();
 		ArrayList<String> l = new ArrayList<String>();
 		

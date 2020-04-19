@@ -4,6 +4,8 @@ author: astetyne
 
 main: main.Main
 
+api-version: 1.13
+
 commands:
      
     explosionbattles: 
@@ -32,4 +34,4 @@ permissions:
    explosionbattles.setup:
      default: op
         
-version: 0.4.4 SNAPSHOT
+version: 0.4.5 SNAPSHOT

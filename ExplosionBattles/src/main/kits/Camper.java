@@ -28,7 +28,7 @@ public class Camper extends Kit {
 
 	@Override
 	public void onInteract(ItemStack is) {
-		if(is.getType() == Material.LEAVES) {
+		if(is.getType() == Material.DARK_OAK_LEAVES) {
 			bush.wantsToUseBush();
 		}
 	}

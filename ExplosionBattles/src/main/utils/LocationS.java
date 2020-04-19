@@ -1,10 +1,11 @@
 package main.utils;
 
-import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class LocationS implements Serializable {
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-	private static final long serialVersionUID = 1L;
+public class LocationS implements ConfigurationSerializable {
 	
 	private String world;
 	private double x,y,z;
@@ -46,6 +47,40 @@ public class LocationS implements Serializable {
 
 	public void setZ(double z) {
 		this.z = z;
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
+		result.put("world", world);
+		result.put("x",x);
+		result.put("y", y);
+		result.put("z", z);
+		return result;
+	}
+	
+	public static LocationS deserialize(Map<String, Object> args) {
+		
+		String world = "";
+		double x=0,y=0,z=0;
+		
+		if(args.containsKey("world")) {
+            world = (String) args.get("world");
+        }
+		
+		if(args.containsKey("x")) {
+            x = ((Double)args.get("x")).doubleValue();
+        }
+
+        if(args.containsKey("y")) {
+            y = ((Double)args.get("y")).doubleValue();
+        }
+
+        if(args.containsKey("z")) {
+            z = ((Double)args.get("z")).doubleValue();
+        }
+        
+		return new LocationS(world,x,y,z);
 	}
 	
 	

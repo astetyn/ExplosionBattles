@@ -23,7 +23,7 @@ public class Bush {
 	
 	public Bush(PlayerEB playerEB, int inventorySlot) {
 		this.playerEB = playerEB;
-		ItemStack item = new ItemStack(Material.LEAVES,1);
+		ItemStack item = new ItemStack(Material.DARK_OAK_LEAVES,1);
 		ItemMeta im = item.getItemMeta();
 		im.setDisplayName(ChatColor.YELLOW+"Hide behind bushes.");
 		item.setItemMeta(im);
@@ -58,7 +58,7 @@ public class Bush {
 			if(bb.getType()!=Material.AIR) {
 				continue;
 			}
-			bb.setType(Material.LEAVES);
+			bb.setType(Material.DARK_OAK_LEAVES);
 			BlockState statee = bb.getState();
 			Leaves ll = (Leaves) statee.getData();
 			ll.setDecayable(false);
@@ -81,7 +81,7 @@ public class Bush {
 				if(b.getType()!=Material.AIR) {
 					continue;
 				}
-				b.setType(Material.LEAVES);
+				b.setType(Material.DARK_OAK_LEAVES);
 				BlockState state = b.getState();
 				Leaves l = (Leaves) state.getData();
 				l.setDecayable(false);
@@ -105,7 +105,7 @@ public class Bush {
 				if(b.getType()!=Material.AIR) {
 					continue;
 				}
-				b.setType(Material.LEAVES);
+				b.setType(Material.DARK_OAK_LEAVES);
 				BlockState state = b.getState();
 				Leaves l = (Leaves) state.getData();
 				l.setDecayable(false);
@@ -127,7 +127,7 @@ public class Bush {
 				if(b.getType()!=Material.AIR) {
 					continue;
 				}
-				b.setType(Material.LEAVES);
+				b.setType(Material.DARK_OAK_LEAVES);
 				BlockState state = b.getState();
 				Leaves l = (Leaves) state.getData();
 				l.setDecayable(false);
@@ -149,7 +149,7 @@ public class Bush {
 				if(b.getType()!=Material.AIR) {
 					continue;
 				}
-				b.setType(Material.LEAVES);
+				b.setType(Material.DARK_OAK_LEAVES);
 				BlockState state = b.getState();
 				Leaves l = (Leaves) state.getData();
 				l.setDecayable(false);

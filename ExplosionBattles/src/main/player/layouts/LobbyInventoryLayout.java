@@ -50,7 +50,7 @@ public class LobbyInventoryLayout extends InventoryLayout {
 		
 		ArrayList <String> al3 = new ArrayList <String> ();
 		al3.add(ChatColor.GOLD + "Klikni pre odpojenie z hry.");
-		ItemStack is3 = new ItemStack(Material.WATCH,1);
+		ItemStack is3 = new ItemStack(Material.CLOCK,1);
 		ItemMeta im2 = is3.getItemMeta();
 		im2.setDisplayName(ChatColor.RED+""+ChatColor.BOLD+"Odpojenie z hry");
 		im2.setLore(al3);

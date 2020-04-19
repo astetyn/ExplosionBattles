@@ -46,8 +46,8 @@ public class PlayerInteractListener implements Listener {
 		}
 		if(e.getClickedBlock()!=null) {
 			Material m = e.getClickedBlock().getType();
-			if(m==Material.WOOD_BUTTON||m==Material.WOODEN_DOOR||m==Material.ACACIA_DOOR||m==Material.BIRCH_DOOR||
-				m==Material.DARK_OAK_DOOR||m==Material.JUNGLE_DOOR||m==Material.SPRUCE_DOOR||m==Material.TRAP_DOOR||m==Material.STONE_BUTTON) {
+			if(m==Material.OAK_BUTTON||m==Material.DARK_OAK_DOOR||m==Material.ACACIA_DOOR||m==Material.BIRCH_DOOR||
+				m==Material.DARK_OAK_DOOR||m==Material.JUNGLE_DOOR||m==Material.SPRUCE_DOOR||m==Material.OAK_TRAPDOOR||m==Material.STONE_BUTTON) {
 				return;
 			}
 		}

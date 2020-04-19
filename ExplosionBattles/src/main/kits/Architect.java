@@ -34,21 +34,21 @@ public class Architect extends Kit {
 	@Override
 	public void startInit() {
 		
-		ItemStack is = new ItemStack(Material.WOOD_PICKAXE,1);
+		ItemStack is = new ItemStack(Material.WOODEN_PICKAXE,1);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName("Schody");
 		is.setItemMeta(im);
 		getPlayerEB().getPlayer().getInventory().setItem(1, is);
 		tools.add(is);
 		
-		ItemStack is2 = new ItemStack(Material.WOOD_HOE,1);
+		ItemStack is2 = new ItemStack(Material.WOODEN_HOE,1);
 		ItemMeta im2 = is2.getItemMeta();
 		im2.setDisplayName("Stena");
 		is2.setItemMeta(im2);
 		getPlayerEB().getPlayer().getInventory().setItem(2, is2);
 		tools.add(is2);
 		
-		ItemStack is3 = new ItemStack(Material.WOOD_SPADE,1);
+		ItemStack is3 = new ItemStack(Material.WOODEN_SHOVEL,1);
 		ItemMeta im3 = is3.getItemMeta();
 		im3.setDisplayName("Platforma");
 		is3.setItemMeta(im3);
@@ -71,17 +71,17 @@ public class Architect extends Kit {
 				lastBuild = System.currentTimeMillis();
 			
 			
-				if(is.getType()==Material.WOOD_PICKAXE) {
+				if(is.getType()==Material.WOODEN_PICKAXE) {
 					boolean b = wantsToBuildStairs();
 					if(!b) {
 						getPlayerEB().getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Na schody nie je dosť miesta.");
 					}
-				}else if(is.getType()==Material.WOOD_HOE) {
+				}else if(is.getType()==Material.WOODEN_HOE) {
 					boolean b = wantsToBuildWall();
 					if(!b) {
 						getPlayerEB().getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Na stenu nie je dosť miesta.");
 					}
-				}else if(is.getType()==Material.WOOD_SPADE) {
+				}else if(is.getType()==Material.WOODEN_SHOVEL) {
 					boolean b = wantsToBuildPlatform();
 					if(!b) {
 						getPlayerEB().getPlayer().sendMessage(MsgCenter.PREFIX+ChatColor.RED+"Na platformu nie je dosť miesta.");

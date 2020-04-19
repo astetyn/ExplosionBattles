@@ -31,7 +31,7 @@ public class SpectatorInventoryLayout extends InventoryLayout {
 		
 		ArrayList <String> al = new ArrayList <String> ();
 		al.add(ChatColor.GOLD + "Klikni pre odpojenie z hry.");
-		ItemStack is = new ItemStack(Material.WATCH,1);
+		ItemStack is = new ItemStack(Material.CLOCK,1);
 		ItemMeta im2 = is.getItemMeta();
 		im2.setDisplayName(ChatColor.RED+""+ChatColor.BOLD+"Odpojenie z hry");
 		im2.setLore(al);
